@@ -240,10 +240,10 @@ function FloatingParticles() {
 function AmbientLighting() {
   return (
     <>
-      <ambientLight intensity={0.6} color="#FFF8E7" />
+      <ambientLight intensity={0.7} color="#FFF8E7" />
       <directionalLight
-        position={[10, 15, 10]}
-        intensity={1.2}
+        position={[10, 18, 12]}
+        intensity={1.6}
         color="#FFFAE5"
         castShadow
         shadow-mapSize-width={2048}
@@ -283,6 +283,7 @@ function Scene() {
         far={12}
       />
       <OrbitControls
+        target={[0, 2.5, 0]}
         enablePan={false}
         enableZoom={true}
         minZoom={0.8}
@@ -315,7 +316,7 @@ export function Product3D() {
     <div className="relative w-full h-full min-h-[550px] max-w-4xl mx-auto">
       <Suspense fallback={<LoadingFallback />}>
         <Canvas
-          camera={{ position: [0, 5.5, 26], fov: 32 }}
+          camera={{ position: [0, 9, 24], fov: 32 }}
           style={{ outline: 'none' }}
           gl={{ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' }}
           onCreated={({ gl }) => {
