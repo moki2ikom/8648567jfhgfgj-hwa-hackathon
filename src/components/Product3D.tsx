@@ -273,7 +273,6 @@ function Scene() {
       <Environment
         preset="studio"
         background={false}
-        files={['/studio.hdr']}
       />
       <AmbientLighting />
       <Stage
