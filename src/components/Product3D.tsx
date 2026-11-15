@@ -7,9 +7,7 @@ import {
   OrbitControls,
   RoundedBox,
   Environment,
-  Stage,
   ContactShadows,
-  PerspectiveCamera,
 } from '@react-three/drei';
 import { Group, Mesh, MeshStandardMaterial, Vector3, Clock } from 'three';
 
@@ -275,15 +273,15 @@ function Scene() {
         background={false}
       />
       <AmbientLighting />
-      <Stage
-        shadows
-        preset="rembrandt"
-        intensity={1.0}
-        environment="studio"
-      >
-        <BaseStation />
-        <FloatingParticles />
-      </Stage>
+      <BaseStation />
+      <FloatingParticles />
+      <ContactShadows
+        position={[0, 0, 0]}
+        opacity={0.35}
+        scale={45}
+        blur={2.5}
+        far={12}
+      />
       <OrbitControls
         enablePan={false}
         enableZoom={true}
