@@ -50,7 +50,7 @@ interface Order {
 function addDays(date: Date, days: number): string {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
-  return next.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  return next.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
 function CopyButton({ value }: { value: string }) {
@@ -82,6 +82,7 @@ function CopyButton({ value }: { value: string }) {
 function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const token = searchParams.get('token') ?? '';
 
   const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>(
@@ -93,7 +94,29 @@ function ConfirmationContent() {
 
     let cancelled = false;
 
-    fetch(`/api/orders/${encodeURIComponent(orderId)}`, { cache: 'no-store' })
+    try {
+      const cached = sessionStorage.getItem('sniff-solve-last-order');
+      if (cached) {
+        const record = JSON.parse(cached) as Order;
+        if (record.orderId === orderId && Array.isArray(record.items)) {
+          queueMicrotask(() => {
+            if (cancelled) return;
+            setOrder(record);
+            setStatus('ready');
+          });
+          return () => {
+            cancelled = true;
+          };
+        }
+      }
+    } catch {
+      // Fall through to the token lookup.
+    }
+
+    fetch(
+      `/api/orders/${encodeURIComponent(orderId)}?token=${encodeURIComponent(token)}`,
+      { cache: 'no-store' }
+    )
       .then(async (response) => {
         if (cancelled) return;
         if (response.status === 404) {
@@ -120,7 +143,7 @@ function ConfirmationContent() {
     return () => {
       cancelled = true;
     };
-  }, [orderId]);
+  }, [orderId, token]);
 
   return (
     <div className="flex min-h-screen flex-col bg-bone-50">
@@ -143,8 +166,9 @@ function ConfirmationContent() {
               <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-ochre">No record</p>
               <h1 className="mt-4 font-display text-3xl sm:text-4xl">That order isn’t here.</h1>
               <p className="mx-auto mt-4 max-w-md text-[14px] leading-relaxed text-ink-soft">
-                This demo keeps orders in memory on the server, so a record can disappear when the
-                API restarts. If you just placed an order, try the link again in a moment.
+                This demo keeps orders in memory on a single server instance. A record can disappear
+                after the API restarts or redeploys, and the link needs the token created at
+                checkout.
               </p>
               <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
                 <Link
@@ -195,8 +219,8 @@ function ConfirmationContent() {
                   Good choices, {order.customer.split(' ')[0] || 'friend'}.
                 </h1>
                 <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-ink-soft">
-                  Your station is reserved. No payment was taken — this is a demonstration
-                  checkout, and the order below is what the demo API stored.
+                  This is a simulated order. Nothing was charged and nothing will ship. The record
+                  below is what the demo API stored.
                 </p>
               </div>
 
@@ -221,7 +245,12 @@ function ConfirmationContent() {
                   <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">Status</p>
                   <p className="mt-2 text-[14px] capitalize">{order.status}</p>
                   <p className="font-mono text-[8px] uppercase tracking-[0.08em] text-ink/40">
-                    Recorded just now
+                    {new Date(order.createdAt).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </p>
                 </div>
               </div>
@@ -230,7 +259,7 @@ function ConfirmationContent() {
                 <div className="border border-ink/15 bg-bone-50 p-5">
                   <div className="flex items-center gap-2">
                     <Truck className="h-4 w-4 text-ink/45" aria-hidden="true" />
-                    <h2 className="font-mono text-[9px] uppercase tracking-[0.16em]">Estimated arrival</h2>
+                    <h2 className="font-mono text-[9px] uppercase tracking-[0.16em]">Example arrival</h2>
                   </div>
                   <p className="mt-3 font-display text-xl">
                     {addDays(new Date(order.createdAt), order.shippingMethod === 'express' ? 3 : 6)}
@@ -240,7 +269,7 @@ function ConfirmationContent() {
                     {order.shipping === 0 ? 'free' : formatPrice(order.shipping)}
                   </p>
                   <p className="mt-3 font-mono text-[8px] uppercase leading-relaxed tracking-[0.08em] text-ink/35">
-                    Demo estimate only. A real store would email tracking once the parcel leaves.
+                    Simulated estimate only. A real store would email tracking once a parcel leaves.
                   </p>
                 </div>
                 <div className="border border-ink/15 bg-bone-50 p-5">
@@ -314,7 +343,7 @@ function ConfirmationContent() {
                     href="/#modules"
                     className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-ochre hover:underline"
                   >
-                    Read the module guide <ArrowRight className="h-3 w-3" />
+                    See the six modules <ArrowRight className="h-3 w-3" />
                   </Link>
                   <Link
                     href="/#notes"

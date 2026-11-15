@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, Star } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Cart } from '@/components/Cart';
-import { Product3D } from '@/components/Product3D';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/Button';
 import { FAQItem } from '@/components/FAQItem';
 import { CTA } from '@/components/CTA';
@@ -17,6 +17,23 @@ import { product } from '@/lib/product';
 import { catalog } from '@/lib/catalog';
 import { formatPrice } from '@/lib/utils';
 import { useStore } from '@/lib/store';
+
+const Product3D = dynamic(
+  () => import('@/components/Product3D').then((module) => module.Product3D),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full items-center justify-center bg-bone-100">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border border-ink/15 border-t-ochre" />
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink/45">
+            Loading station
+          </p>
+        </div>
+      </div>
+    ),
+  }
+);
 
 function SectionLabel({ index, children }: { index: string; children: React.ReactNode }) {
   return (
@@ -120,6 +137,10 @@ function Hero() {
             01 deck
           </div>
 
+          <p className="sr-only">
+            Interactive 3D preview of the station. The same six modules are described in the
+            modules section below.
+          </p>
           <div className="relative h-[420px] w-full sm:h-[520px] lg:h-[660px]">
             <Product3D selected={selected} onSelect={(id) => setSelected((current) => (current === id ? null : id))} />
           </div>
@@ -186,8 +207,8 @@ function Science() {
             </h2>
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-soft">
               A toy that looks interesting to us can be almost invisible to a dog. Scent is the
-              channel they trust: roughly forty times the olfactory cortex of a human, and a nose
-              that can separate a trail into layers.
+              channel they trust: a nose that can separate a trail into layers, and a brain that
+              reads a room before the eyes do.
             </p>
             <div className="mt-8 border-l-2 border-ochre pl-5">
               <p className="font-display text-xl leading-snug text-ink sm:text-[26px]">
@@ -227,7 +248,7 @@ function Science() {
               {
                 n: '03',
                 title: 'Solving is rest',
-                text: 'A focused scent session can settle a dog the way a long walk does — with less wear on joints and far less furniture.',
+                text: 'A focused scent session gives a dog a job with a clear end. Many dogs settle afterward; adjust duration for age and mobility.',
               },
             ].map((item) => (
               <div key={item.n} className="grid grid-cols-[40px_1fr] gap-4 py-5 sm:grid-cols-[56px_1fr]">
@@ -241,8 +262,8 @@ function Science() {
           </div>
 
           <p className="mt-5 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-ink/40">
-            Built with input from three working scent-detection trainers and a veterinary
-            behaviour consultant.
+            Designed around nose-work fundamentals: track, search, manipulate, persist — then
+            rest.
           </p>
         </div>
       </div>
@@ -272,7 +293,7 @@ function StationSection() {
               for the nose.
             </h2>
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-soft">
-              The base is not a tray. It is a weighted aluminium instrument with six recessed
+              The base is not a tray. It is a weighted aluminum instrument with six recessed
               bays, encapsulated magnets and a machined lip that catches light like a camera body.
               It stays where you put it.
             </p>
@@ -329,7 +350,7 @@ function StationSection() {
             </div>
 
             <p className="mt-4 font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/40">
-              In stock · ships in 1–2 business days · 60-day trial · 2-year warranty
+              Concept store · demo checkout · 60-day trial · 2-year warranty
             </p>
           </Reveal>
         </div>
@@ -621,14 +642,14 @@ function Notes() {
             <div className="lg:col-span-7">
               <SectionLabel index="08">Field notes</SectionLabel>
               <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
-                From the first 214 households.
+                Notes from the test deck.
               </h2>
             </div>
             <div className="lg:col-span-5">
               <div className="flex items-end gap-5">
-                <p className="font-display text-6xl leading-none">4.7</p>
+                <p className="font-display text-6xl leading-none">04</p>
                 <div className="pb-1">
-                  <div className="flex gap-0.5" aria-label="4.7 out of 5 stars">
+                  <div className="flex gap-0.5" aria-label="Four written notes">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -638,13 +659,13 @@ function Notes() {
                     ))}
                   </div>
                   <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
-                    214 beta households · 31 written notes
+                    Illustrative notes · concept store
                   </p>
                 </div>
               </div>
               <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-ink-soft">
-                Beta households paid cost price for the station. Notes are unedited, including the
-                critical ones.
+                These notes are written for the concept store. They are not real customer
+                reviews, and no average rating is claimed.
               </p>
             </div>
           </div>
@@ -825,19 +846,19 @@ function Footer() {
             <h3 className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">Contact</h3>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li>
-                <a href="mailto:hello@sniffsolve.example" className="text-ink/70 hover:text-ink">
-                  hello@sniffsolve.example
-                </a>
-              </li>
-              <li className="text-ink/50">Mon–Fri, 09:00–17:00 CET</li>
-              <li>
                 <Link href="/#faq" className="text-ink/70 hover:text-ink">
                   Order &amp; delivery questions
                 </Link>
               </li>
+              <li className="text-ink/50">
+                This is a concept store. No support inbox is monitored.
+              </li>
               <li>
-                <code className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
-                  GET /api/orders
+                <span className="block font-mono text-[8px] uppercase tracking-[0.12em] text-ink/35">
+                  Demo order endpoint
+                </span>
+                <code className="mt-1 block font-mono text-[10px] uppercase tracking-[0.1em] text-ink/55">
+                  POST /api/orders
                 </code>
               </li>
             </ul>
@@ -847,11 +868,7 @@ function Footer() {
         <div className="flex flex-col gap-3 pt-6 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/35 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Sniff &amp; Solve. All rights reserved.</p>
           <p>Demo build · no real payments · no real shipping</p>
-          <div className="flex gap-5">
-            <Link href="/#faq" className="hover:text-ink">Privacy</Link>
-            <Link href="/#faq" className="hover:text-ink">Terms</Link>
-            <Link href="/#faq" className="hover:text-ink">Accessibility</Link>
-          </div>
+          <p>Station 01 · concept build</p>
         </div>
       </div>
     </footer>

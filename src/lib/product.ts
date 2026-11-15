@@ -6,16 +6,16 @@ export const product = {
   description:
     'A machined base station holds six magnetic puzzle modules, each built around a different canine instinct. Rearrange the deck, change the scent, adjust the difficulty, and the puzzle your dog solved last week is gone.',
   longDescription:
-    'Most enrichment toys are finished in ten minutes and abandoned in ten days. Sniff & Solve is built around rotation instead of novelty: six modules that can be moved, inverted and recombined, four interchangeable scent cartridges, and difficulty settings that scale from a first-sniff puppy to a working scent dog. The base is powder-coated aluminium with a machined lip and non-slip feet. Modules are food-contact copolyester, dishwasher safe, and rated for dogs who destroy everything else.',
+    'Most enrichment toys are finished in ten minutes and abandoned in ten days. Sniff & Solve is built around rotation instead of novelty: six modules that can be moved, inverted and recombined, four interchangeable scent cartridges, and difficulty settings that scale from a first-sniff puppy to a working scent dog. The base is powder-coated aluminum with a machined lip and non-slip feet. Modules are food-contact copolyester, dishwasher safe, and rated for dogs who destroy everything else.',
 
   price: 249,
   currency: 'USD',
 
   includes: [
-    'One base station — 480 × 360 mm, powder-coated aluminium',
+    'One base station — 480 × 360 mm, powder-coated aluminum',
     'Six modules: Scent Maze, Treat Tumble, Flip & Find, Snuffle Spiral, Scent Tubes, Paw Press',
     'Four scent cartridges: peanut, bacon, cheese, liver',
-    'One installed Snuffle Spiral (spare included)',
+    'One Snuffle Spiral with a washable fleece coil',
     'Wall-mount hardware and four rubber feet',
     'Field guide: 12 weekly deck configurations',
     'Two-year hardware warranty and 60-day trial',
@@ -94,7 +94,7 @@ export const product = {
       difficulty: 3,
       time: '10–30 min',
       description:
-        'Six vertical tubes at depths from 60 to 240 mm. Smear, drop or wedge the reward — the dog has to solve the angle as well as the depth.',
+        'Six vertical tubes from 40 to 90 mm deep. Smear, drop or wedge the reward — the dog has to solve the angle as well as the depth.',
       method:
         'Brass collars mark each depth. Swap the tube inserts to change bore and difficulty without changing the module.',
       color: '#6E8A77',
@@ -135,7 +135,7 @@ export const product = {
     {
       code: 'S-03',
       name: 'Aged cheese',
-      notes: 'Sharp dairy · rind · faint ammonia',
+      notes: 'Sharp dairy · aged rind · cultured cream',
       intensity: 4,
       color: '#C58F2E',
       use: 'A long trail that rewards patience.',
@@ -151,23 +151,23 @@ export const product = {
   ],
 
   specSheet: [
-    { label: 'Base', value: '480 × 360 × 45 mm, powder-coated aluminium, 3.6 kg' },
+    { label: 'Base', value: '480 × 360 × 45 mm, powder-coated aluminum, 3.6 kg' },
     { label: 'Modules', value: '150 × 150 × 40–90 mm, food-contact copolyester, 0.5–0.8 kg' },
     { label: 'Deck', value: 'Six recessed bays, N42 magnets, 2.2 kg pull per bay' },
-    { label: 'Fabric', value: 'Recycled polyester fleece, machine washable at 30°C' },
+    { label: 'Fabric', value: 'Recycled polyester fleece, machine wash cold' },
     { label: 'Hardware', value: '316 stainless steel, brass collars, TPE feet' },
     { label: 'Power', value: 'Paw Press only: 3 × AA, approximately 6 months' },
-    { label: 'Safety', value: 'No loose magnets. No small parts. Tool-secured battery bay.' },
-    { label: 'Care', value: 'Modules top-rack dishwasher safe. Base wipes clean.' },
+    { label: 'Safety', value: 'Enclosed magnets. No small parts. Tool-secured battery bay.' },
+    { label: 'Care', value: 'Passive modules are top-rack dishwasher safe; Paw Press wipes clean. Base wipes clean.' },
   ],
 
   specs: {
     dimensions: 'Base 480 × 360 × 45 mm · Modules 150 × 150 mm',
     weight: 'Base 3.6 kg · Modules 0.5–0.8 kg each',
-    materials: 'Powder-coated aluminium, food-contact copolyester, recycled fleece, stainless steel',
-    care: 'Modules: top-rack dishwasher. Fleece: machine wash cold. Base: damp cloth.',
-    safety: 'No loose magnets, no accessible batteries, no small parts',
-    warranty: '2 years on base and modules · 60-day trial · free spiral replacement',
+    materials: 'Powder-coated aluminum, food-contact copolyester, recycled fleece, stainless steel',
+    care: 'Passive modules: top-rack dishwasher. Paw Press: wipe clean. Fleece: machine wash cold. Base: damp cloth.',
+    safety: 'Enclosed magnets, no accessible batteries, no small parts',
+    warranty: '2 years on base and modules · 60-day trial · replacement coils $12',
     power: 'Paw Press: 3 × AA (included) · all other modules passive',
     compatibility: 'Floor-standing or wall-mounted · dogs 6 kg and up',
   },
@@ -203,7 +203,7 @@ export const product = {
     },
     {
       feature: 'Dishwasher-safe parts',
-      station: 'All modules',
+      station: 'Passive modules',
       snuffle: 'No',
       ball: 'Some',
       puzzle: 'No',
@@ -220,11 +220,11 @@ export const product = {
   faq: [
     {
       q: 'My dog destroys everything. Will this survive?',
-      a: 'The base is powder-coated aluminium and the modules are moulded from the same copolyester used in premium chew toys. We beta-tested with 214 households, including 38 self-described power-chewer homes; no module was structurally damaged. If one is, the two-year warranty replaces it.',
+      a: 'The base is powder-coated aluminum and the modules are molded from food-contact copolyester, with no exposed seams to catch a tooth. No toy is indestructible, so supervise the first sessions. If a module is damaged, the two-year warranty replaces it.',
     },
     {
       q: 'How long does it actually keep a dog busy?',
-      a: 'In our 214-household beta, a full six-module deck produced a median first-session engagement of 41 minutes, with dogs returning for two or three shorter sessions a day. The number that matters is week six: households that changed two modules weekly reported engagement staying roughly flat, while households that left the deck unchanged reported a drop after ten days.',
+      a: 'A full deck is designed for several short sessions, not one long one. Start with one or two modules for ten to twenty minutes, then add modules as confidence grows. Rotate two modules and one scent each week: the deck stays familiar while the problem changes. If the deck stays unchanged, most dogs lose interest within a week or two — that is habituation, not failure.',
     },
     {
       q: 'Is the app required?',
@@ -232,7 +232,7 @@ export const product = {
     },
     {
       q: 'Can I buy modules separately?',
-      a: 'Yes. Single modules are $39, the six-module Expansion Pack is $199, replacement spirals are $12, and the four-cartridge scent pack is $18. Every module fits every base.',
+      a: 'Yes. The six-module Expansion Pack is $199, replacement fleece coils are $12, and scent cartridges come in four-packs for $18 or eight-packs for $32. Every module fits every base.',
     },
     {
       q: 'What if my dog solves it too fast?',
@@ -244,7 +244,11 @@ export const product = {
     },
     {
       q: 'What does the trial cover?',
-      a: 'Sixty days from delivery. If your dog loses interest, email us and we refund the order and pay return shipping. The only thing we ask is that you try at least three different deck configurations first — rotation is the product.',
+      a: 'Sixty days from delivery. If your dog loses interest, contact us and we refund the order and pay return shipping. The field guide includes twelve deck configurations to try first — rotation is the product.',
+    },
+    {
+      q: 'How do I clean it?',
+      a: 'Passive modules are top-rack dishwasher safe; wipe the Paw Press around its sealed battery bay instead of washing it. The fleece coil machine-washes cold in a laundry bag. The base is aluminum — wipe it with a damp cloth, never the dishwasher.',
     },
     {
       q: 'Where do you ship?',
@@ -260,7 +264,7 @@ export const product = {
       city: 'Portland, OR',
       rating: 5,
       date: 'October 2026',
-      household: 'Beta household 041',
+      household: 'Illustrative note',
       title: 'The rotation is the whole thing',
       text: 'We started with the maze and the spiral. By week three she was opening the Flip & Find latches without a treat behind them — she just wanted to check. The difference from our old snuffle mat is that I can make it harder without buying a new object. Week six and she still checks the deck when I walk past it.',
     },
@@ -271,7 +275,7 @@ export const product = {
       city: 'Manchester, UK',
       rating: 5,
       date: 'September 2026',
-      household: 'Beta household 178',
+      household: 'Illustrative note',
       title: 'Survived a labrador',
       text: 'I bought it expecting to be disappointed by the plastic. Two months in, the tumble drum has a few scuffs and everything else looks new. The brass axle and the weight of the base are what sold me — it does not slide across the floor when he gets enthusiastic.',
     },
@@ -282,7 +286,7 @@ export const product = {
       city: 'Toronto, ON',
       rating: 4,
       date: 'September 2026',
-      household: 'Beta household 096',
+      household: 'Illustrative note',
       title: 'Good for an older dog',
       text: 'Our dog is eight and mostly deaf, so scent is how she still gets information about the world. The tubes are her favourite. I took one star off because the Paw Press is too much for her joints, but the modular design means we simply leave that bay empty.',
     },
@@ -293,7 +297,7 @@ export const product = {
       city: 'Berlin, DE',
       rating: 5,
       date: 'August 2026',
-      household: 'Beta household 212',
+      household: 'Illustrative note',
       title: 'Finally, something he cannot finish',
       text: 'He solved every puzzle we owned in a week. The scent cartridges were the missing piece — the same maze becomes a new problem when the trail changes. The field guide is genuinely useful; we are on configuration nine.',
     },
@@ -302,15 +306,15 @@ export const product = {
   guarantee: [
     {
       title: '60-day nose-back trial',
-      text: 'Try three deck configurations. If your dog is not interested, we refund the order and pay the return shipping.',
+      text: 'Sixty days to live with it. If your dog is not interested, we refund the order and pay the return shipping.',
     },
     {
       title: '2-year hardware warranty',
       text: 'Base, magnets, hinges and collars are covered. If a module fails, we replace it, not the whole station.',
     },
     {
-      title: 'Spare spirals, free',
-      text: 'Fleece wears out before hardware does. Replacement spirals are free for the life of the station; you cover shipping.',
+      title: 'Coils at cost',
+      text: 'Fleece wears out before hardware does. Replacement coils are $12 and ship with any order — no subscription, no scheduled refills.',
     },
   ],
 

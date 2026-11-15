@@ -7,15 +7,19 @@ import { useMounted } from '@/lib/use-mounted';
 import { Menu, ShoppingBag, X } from 'lucide-react';
 
 const NAV = [
-  { href: '/#station', label: 'The station', index: '01' },
-  { href: '/#modules', label: 'Modules', index: '02' },
-  { href: '/#scents', label: 'Scent library', index: '03' },
-  { href: '/#build', label: 'Build a kit', index: '04' },
-  { href: '/#notes', label: 'Field notes', index: '05' },
+  { href: '/#station', label: 'The station', index: '03' },
+  { href: '/#modules', label: 'Modules', index: '04' },
+  { href: '/#scents', label: 'Scent library', index: '05' },
+  { href: '/#build', label: 'Build a kit', index: '06' },
+  { href: '/#notes', label: 'Field notes', index: '08' },
 ];
 
 export function Header() {
-  const { getCartCount, openCart, isCartOpen } = useStore();
+  const openCart = useStore((state) => state.openCart);
+  const isCartOpen = useStore((state) => state.isCartOpen);
+  const cartCount = useStore((state) =>
+    state.cart.reduce((count, item) => count + item.quantity, 0)
+  );
   const mounted = useMounted();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -28,7 +32,7 @@ export function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
-  const cartCount = mounted ? getCartCount() : 0;
+  const visibleCount = mounted ? cartCount : 0;
 
   return (
     <header className="sticky top-0 z-50 border-b border-ink/15 bg-bone-50/92 backdrop-blur-md">
@@ -36,7 +40,7 @@ export function Header() {
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-1.5 font-mono text-[9px] uppercase tracking-[0.22em] sm:px-8">
           <p>Free shipping over $100</p>
           <p className="hidden sm:block">60-day nose-back trial · 2-year hardware warranty</p>
-          <p className="text-ochre-light">Station 01 — shipping now</p>
+          <p className="text-ochre-light">Concept store · station 01</p>
         </div>
       </div>
 
@@ -78,13 +82,13 @@ export function Header() {
             type="button"
             onClick={openCart}
             className="relative flex items-center gap-2 rounded-sm px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/80 transition-colors hover:bg-ink/5 hover:text-ink"
-            aria-label={`Open cart, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}`}
+            aria-label={`Open cart, ${visibleCount} ${visibleCount === 1 ? 'item' : 'items'}`}
             aria-haspopup="dialog"
           >
             <ShoppingBag className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Cart</span>
             <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-ochre px-1 text-[9px] font-semibold leading-none text-ink">
-              {cartCount}
+              {visibleCount}
             </span>
           </button>
           <button
@@ -128,7 +132,7 @@ export function Header() {
             }}
             className="mt-6 w-full rounded-sm border border-ink/25 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em]"
           >
-            View cart {isCartOpen ? '' : `(${cartCount})`}
+            View cart {isCartOpen ? '' : `(${visibleCount})`}
           </button>
         </nav>
       )}

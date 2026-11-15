@@ -21,6 +21,7 @@ import {
   SRGBColorSpace,
   Vector3,
 } from 'three';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 
 const DECK_Y = 2.56;
 
@@ -525,6 +526,7 @@ interface ModuleUnitProps {
 
 function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUnitProps) {
   const group = useRef<Group>(null);
+  const reduced = useReducedMotion();
   const [x, z] = SLOTS[id];
   const Body = MODULE_BODIES[id];
 
@@ -532,6 +534,11 @@ function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUni
     if (!group.current) return;
     const time = state.clock.elapsedTime;
     const lift = active || hovered ? 0.18 : 0;
+    if (reduced) {
+      group.current.position.y = DECK_Y + lift;
+      group.current.scale.setScalar(1);
+      return;
+    }
     group.current.position.y = MathUtils.damp(group.current.position.y, DECK_Y + lift, 7, delta);
     const appear = MathUtils.clamp((time - 0.25 - index * 0.08) / 0.6, 0, 1);
     const eased = 1 - Math.pow(1 - appear, 3);
@@ -566,6 +573,7 @@ function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUni
 
 function ScentDust() {
   const group = useRef<Group>(null);
+  const reduced = useReducedMotion();
   const dots = useMemo(
     () =>
       Array.from({ length: 18 }, (_, i) => {
@@ -583,7 +591,7 @@ function ScentDust() {
   );
 
   useFrame((state) => {
-    if (!group.current) return;
+    if (!group.current || reduced) return;
     group.current.children.forEach((child, i) => {
       const dot = dots[i];
       if (!dot) return;
@@ -637,9 +645,12 @@ function StudioEnvironment() {
 
 function CameraRig() {
   const { camera, size } = useThree();
+  const placed = useRef(false);
 
   useEffect(() => {
-    if (!(camera instanceof PerspectiveCamera)) return;
+    if (!(camera instanceof PerspectiveCamera) || placed.current) return;
+    if (size.width <= 0 || size.height <= 0) return;
+    placed.current = true;
     const aspect = size.width / Math.max(1, size.height);
     if (aspect < 0.95) {
       camera.position.set(18, 15, 27);
@@ -663,10 +674,15 @@ function Station({
   const [hovered, setHovered] = useState<string | null>(null);
   const root = useRef<Group>(null);
   const ring = useRef<Group>(null);
+  const reduced = useReducedMotion();
 
   useFrame((state, delta) => {
     if (root.current) {
-      root.current.position.y = MathUtils.damp(root.current.position.y, 0, 2.8, delta);
+      if (reduced) {
+        root.current.position.y = 0;
+      } else {
+        root.current.position.y = MathUtils.damp(root.current.position.y, 0, 2.8, delta);
+      }
     }
     if (ring.current) {
       const target = selected || hovered ? 1 : 0;
@@ -753,7 +769,7 @@ function Scene({
         blur={2.6}
         far={12}
         resolution={512}
-        frames={60}
+        frames={200}
         color="#2B2115"
       />
       <CameraRig />
@@ -806,6 +822,8 @@ export function Product3D({ selected = null, onSelect, className }: Product3DPro
           }
         >
           <Canvas
+            className="station-canvas"
+            aria-label="Interactive 3D model of the station with six puzzle modules"
             dpr={[1, 1.75]}
             shadows={{ type: PCFShadowMap }}
             camera={{ position: [15, 12.5, 20.5], fov: 32 }}

@@ -56,12 +56,7 @@ export function StationDiagram() {
                 key={slot.id}
                 onMouseEnter={() => setHovered(slot.id)}
                 onMouseLeave={() => setHovered(null)}
-                onFocus={() => setHovered(slot.id)}
-                onBlur={() => setHovered(null)}
-                tabIndex={0}
-                role="button"
-                aria-label={`${unit.name} — ${unit.instinct}`}
-                className="cursor-pointer outline-none"
+                className="cursor-pointer"
               >
                 <rect
                   x={slot.x}

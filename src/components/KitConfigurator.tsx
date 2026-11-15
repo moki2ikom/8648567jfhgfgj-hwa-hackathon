@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Check, Plus } from 'lucide-react';
-import { KIT_PRICE_MAP, catalog } from '@/lib/catalog';
+import { KIT_PRICE_MAP } from '@/lib/catalog';
 import { useStore } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
 
@@ -24,15 +24,15 @@ const KITS: Array<{
     modules: 3,
     modulesLabel: 'Three modules',
     blurb: 'Maze, spiral and scent tubes. A calm first month of nose work.',
-    session: '12–20 min sessions',
+    session: '15–30 min',
   },
   {
     key: 'core',
     label: 'Core',
     modules: 6,
     modulesLabel: 'Six modules',
-    blurb: 'The full deck. Every instinct covered, twelve weekly configurations.',
-    session: '25–40 min sessions',
+    blurb: 'All six bays. Every instinct covered, twelve weekly configurations.',
+    session: '15–45 min',
   },
   {
     key: 'full',
@@ -40,12 +40,12 @@ const KITS: Array<{
     modules: 12,
     modulesLabel: 'Twelve modules',
     blurb: 'Two of each module. Build two stations or double the rotation.',
-    session: '40–70 min sessions',
+    session: '15–45 min · two decks',
   },
 ];
 
 const FINISHES: Array<{ key: FinishKey; label: string; swatch: string; note: string }> = [
-  { key: 'graphite', label: 'Graphite', swatch: '#242427', note: 'Anodised dark aluminium' },
+  { key: 'graphite', label: 'Graphite', swatch: '#242427', note: 'Anodized dark aluminum' },
   { key: 'bone', label: 'Bone', swatch: '#D8CDB7', note: 'Powder-coated warm bone' },
 ];
 
@@ -58,7 +58,9 @@ export function KitConfigurator() {
   const selectedKit = KITS.find((item) => item.key === kit) ?? KITS[1];
   const pricing = KIT_PRICE_MAP[kit][scents];
   const finishInfo = FINISHES.find((item) => item.key === finish) ?? FINISHES[0];
-  const coverage = Math.round((selectedKit.modules / 12) * 100);
+  const installed = Math.min(selectedKit.modules, 6);
+  const spare = Math.max(selectedKit.modules - 6, 0);
+  const scentsDelta = KIT_PRICE_MAP[kit]['8'].price - KIT_PRICE_MAP[kit]['4'].price;
 
   const add = () => {
     addToCart({
@@ -129,7 +131,7 @@ export function KitConfigurator() {
                       {option === '4' ? 'One intensity per note' : 'Two intensities per note'}
                     </span>
                   </span>
-                  <span className="font-mono text-[10px]">{option === '4' ? 'Included' : `+${formatPrice(catalog['scent-cartridges-8'].price - catalog['scent-cartridges-4'].price)}`}</span>
+                  <span className="font-mono text-[10px]">{option === '4' ? 'Included' : `+${formatPrice(scentsDelta)}`}</span>
                 </button>
               );
             })}
@@ -192,18 +194,18 @@ export function KitConfigurator() {
           <div className="mt-6">
             <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.14em] text-ink/45">
               <span>Deck coverage</span>
-              <span>{selectedKit.modules} / 12 bays</span>
+              <span>{installed} / 6 bays{spare > 0 ? ` · ${spare} spares` : ''}</span>
             </div>
             <div className="mt-2 flex gap-1" aria-hidden="true">
-              {Array.from({ length: 12 }).map((_, i) => (
+              {Array.from({ length: 6 }).map((_, i) => (
                 <span
                   key={i}
-                  className={`h-3 flex-1 ${i < selectedKit.modules ? 'bg-ink' : 'bg-ink/12'}`}
+                  className={`h-3 flex-1 ${i < installed ? 'bg-ink' : 'bg-ink/12'}`}
                 />
               ))}
             </div>
             <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/40">
-              {coverage}% of the permutation space
+              {spare > 0 ? `${installed} installed · ${spare} spare modules` : 'All six bays filled · 720 deck orders'}
             </p>
           </div>
         </div>

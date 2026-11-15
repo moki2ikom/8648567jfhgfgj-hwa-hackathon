@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AlertCircle, ArrowLeft, ArrowRight, Check, Loader2, Lock } from 'lucide-react';
@@ -127,7 +127,8 @@ function Summary({
         <div className="flex items-center justify-between border-b border-ink/15 px-5 py-4">
           <h2 className="font-mono text-[10px] uppercase tracking-[0.18em]">Order summary</h2>
           <span className="font-mono text-[9px] text-ink/40">
-            {cart.reduce((sum, item) => sum + item.quantity, 0)} items
+            {cart.reduce((sum, item) => sum + item.quantity, 0)}{' '}
+            {cart.reduce((sum, item) => sum + item.quantity, 0) === 1 ? 'item' : 'items'}
           </span>
         </div>
 
@@ -202,6 +203,7 @@ function CheckoutContent() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const submittingRef = useRef(false);
 
   const subtotal = getCartTotal();
   const shipping = shippingCostFor(subtotal, shippingMethod);
@@ -217,7 +219,7 @@ function CheckoutContent() {
     setErrors((current) => ({ ...current, [key]: undefined }));
   };
 
-  const validate = (scope: Step | 'all'): boolean => {
+  const validate = (scope: Step | 'all'): Partial<Record<keyof FormState, string>> => {
     const next: Partial<Record<keyof FormState, string>> = {};
 
     if (scope === 'contact' || scope === 'all') {
@@ -235,11 +237,12 @@ function CheckoutContent() {
     }
 
     setErrors(next);
-    return Object.keys(next).length === 0;
+    return next;
   };
 
   const goNext = () => {
-    if (!validate(step)) return;
+    const next = validate(step);
+    if (Object.keys(next).length > 0) return;
     if (step === 'contact') setStep('delivery');
     if (step === 'delivery') setStep('review');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -252,11 +255,13 @@ function CheckoutContent() {
   };
 
   const placeOrder = async () => {
-    if (submitting) return;
-    if (!validate('all')) {
-      setStep(errors.line1 || errors.city || errors.region || errors.postal ? 'delivery' : 'contact');
+    if (submittingRef.current) return;
+    const next = validate('all');
+    if (Object.keys(next).length > 0) {
+      setStep(next.line1 || next.city || next.region || next.postal ? 'delivery' : 'contact');
       return;
     }
+    submittingRef.current = true;
     setSubmitting(true);
     setSubmitError('');
 
@@ -281,16 +286,35 @@ function CheckoutContent() {
         }),
       });
 
-      const payload = (await response.json()) as { orderId?: string; error?: string };
+      const payload = (await response.json()) as {
+        orderId?: string;
+        orderToken?: string;
+        order?: Record<string, unknown>;
+        error?: string;
+      };
 
       if (!response.ok || !payload.orderId) {
         throw new Error(payload.error || 'The order could not be recorded.');
       }
 
+      try {
+        if (payload.order) {
+          sessionStorage.setItem(
+            'sniff-solve-last-order',
+            JSON.stringify({ ...payload.order, orderId: payload.orderId })
+          );
+        }
+      } catch {
+        // Storage can be unavailable in private browsing; the token URL still works.
+      }
+
       setSubmitted(true);
       clearCart();
-      router.push(`/order-confirmation?orderId=${encodeURIComponent(payload.orderId)}`);
+      router.push(
+        `/order-confirmation?orderId=${encodeURIComponent(payload.orderId)}&token=${encodeURIComponent(payload.orderToken ?? '')}`
+      );
     } catch (error) {
+      submittingRef.current = false;
       setSubmitError(error instanceof Error ? error.message : 'Something went wrong.');
       setSubmitting(false);
     }

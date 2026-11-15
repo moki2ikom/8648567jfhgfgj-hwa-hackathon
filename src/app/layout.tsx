@@ -36,7 +36,6 @@ export const metadata: Metadata = {
     "scent puzzle",
     "dog puzzle toy",
     "nose work",
-    "separation anxiety",
     "snuffle",
     "treat puzzle",
   ],
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
   creator: "Sniff & Solve",
   publisher: "Sniff & Solve",
   robots: { index: true, follow: true },
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: '/' },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -72,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-bone-50 text-ink">{children}</body>

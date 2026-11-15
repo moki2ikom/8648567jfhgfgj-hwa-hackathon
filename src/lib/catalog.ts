@@ -26,7 +26,7 @@ export const catalog: Record<string, CatalogItem> = {
   'kit-full': {
     id: 'kit-full',
     name: 'The Station — Full Library',
-    subtitle: 'Base + 12 modules + 8 scent cartridges',
+    subtitle: 'Base + 12 modules + 4 scent cartridges',
     price: 429,
     swatch: '#3F5240',
   },

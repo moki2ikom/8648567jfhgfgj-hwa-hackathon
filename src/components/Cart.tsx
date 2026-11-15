@@ -3,39 +3,64 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Minus, Plus, X } from 'lucide-react';
-import { useStore } from '@/lib/store';
+import { MAX_CART_QUANTITY, useStore } from '@/lib/store';
 import { FREE_SHIPPING_THRESHOLD } from '@/lib/catalog';
 import { formatPrice } from '@/lib/utils';
 
 export function Cart() {
-  const {
-    cart,
-    isCartOpen,
-    closeCart,
-    removeFromCart,
-    updateQuantity,
-    getCartTotal,
-    clearCart,
-  } = useStore();
+  const cart = useStore((state) => state.cart);
+  const isCartOpen = useStore((state) => state.isCartOpen);
+  const closeCart = useStore((state) => state.closeCart);
+  const removeFromCart = useStore((state) => state.removeFromCart);
+  const updateQuantity = useStore((state) => state.updateQuantity);
+  const clearCart = useStore((state) => state.clearCart);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
-  const subtotal = getCartTotal();
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : 9;
-  const total = subtotal + shipping;
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : null;
+  const total = subtotal + (shipping ?? 0);
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
   useEffect(() => {
     if (!isCartOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeCart();
-    };
-    window.addEventListener('keydown', onKey);
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     closeRef.current?.focus();
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeCart();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const nodes = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]):not([tabindex="-1"]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((node) => node.offsetParent !== null);
+      if (nodes.length === 0) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
+      triggerRef.current?.focus?.();
     };
   }, [isCartOpen, closeCart]);
 
@@ -51,6 +76,7 @@ export function Cart() {
         tabIndex={-1}
       />
       <aside
+        ref={panelRef}
         className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-ink/20 bg-bone-50 shadow-[-24px_0_60px_rgba(23,21,15,0.18)]"
         role="dialog"
         aria-modal="true"
@@ -127,7 +153,8 @@ export function Cart() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="px-2 py-1 text-ink/60 hover:bg-ink/5 hover:text-ink"
+                          disabled={item.quantity >= MAX_CART_QUANTITY}
+                          className="px-2 py-1 text-ink/60 hover:bg-ink/5 hover:text-ink disabled:cursor-not-allowed disabled:opacity-30"
                           aria-label={`Increase ${item.name} quantity`}
                         >
                           <Plus className="h-3 w-3" />
@@ -170,12 +197,18 @@ export function Cart() {
               </div>
               <div className="flex justify-between">
                 <dt className="text-ink/55">Shipping</dt>
-                <dd>{shipping === 0 ? 'Free' : formatPrice(shipping)}</dd>
+                <dd>{shipping === null ? 'Calculated at checkout' : 'Free'}</dd>
               </div>
-              <div className="flex justify-between border-t border-ink/15 pt-2 text-[13px]">
-                <dt>Total</dt>
-                <dd>{formatPrice(total)}</dd>
-              </div>
+              {shipping === null ? (
+                <p className="pt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/40">
+                  Free over {formatPrice(FREE_SHIPPING_THRESHOLD)}
+                </p>
+              ) : (
+                <div className="flex justify-between border-t border-ink/15 pt-2 text-[13px]">
+                  <dt>Total</dt>
+                  <dd>{formatPrice(total)}</dd>
+                </div>
+              )}
             </dl>
 
             <Link

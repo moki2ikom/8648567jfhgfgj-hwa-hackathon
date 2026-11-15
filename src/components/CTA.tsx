@@ -29,7 +29,7 @@ export function CTA() {
       <div className="relative mx-auto grid max-w-[1400px] grid-cols-1 gap-12 px-5 py-24 sm:px-8 lg:grid-cols-12 lg:py-32">
         <div className="lg:col-span-8">
           <p className="font-mono text-[9px] uppercase tracking-[0.28em] text-ochre-light">
-            07 — The invitation
+            11 — The invitation
           </p>
           <h2 className="mt-6 max-w-3xl font-display text-[38px] leading-[0.98] tracking-[-0.02em] sm:text-6xl lg:text-7xl">
             Give the nose
@@ -37,7 +37,7 @@ export function CTA() {
             a job.
           </h2>
           <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-bone-100/65">
-            Twenty minutes of scent work can settle a dog the way a long walk cannot. The
+            Twenty minutes of scent work can settle a dog in a way a walk sometimes cannot. The
             station is built to be rearranged, not completed.
           </p>
         </div>

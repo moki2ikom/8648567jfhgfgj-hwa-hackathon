@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export const MAX_CART_QUANTITY = 20;
+
 export interface CartItem {
   id: string;
   name: string;
@@ -36,7 +38,9 @@ export const useStore = create<StoreState>()(
           if (existing) {
             return {
               cart: state.cart.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                i.id === item.id
+                  ? { ...i, quantity: Math.min(MAX_CART_QUANTITY, i.quantity + 1) }
+                  : i
               ),
             };
           }
@@ -53,7 +57,11 @@ export const useStore = create<StoreState>()(
           cart:
             quantity <= 0
               ? state.cart.filter((i) => i.id !== id)
-              : state.cart.map((i) => (i.id === id ? { ...i, quantity } : i)),
+              : state.cart.map((i) =>
+                  i.id === id
+                    ? { ...i, quantity: Math.min(MAX_CART_QUANTITY, Math.floor(quantity)) }
+                    : i
+                ),
         })),
 
       clearCart: () => set({ cart: [] }),
@@ -76,6 +84,33 @@ export const useStore = create<StoreState>()(
       name: 'sniff-solve-cart',
       version: 2,
       partialize: (state) => ({ cart: state.cart }),
+      migrate: (persistedState) => {
+        const state = persistedState as { cart?: unknown } | null;
+        const cart = Array.isArray(state?.cart)
+          ? state.cart
+              .filter((item): item is CartItem => {
+                if (!item || typeof item !== 'object') return false;
+                const candidate = item as Partial<CartItem>;
+                return (
+                  typeof candidate.id === 'string' &&
+                  typeof candidate.name === 'string' &&
+                  typeof candidate.price === 'number' &&
+                  Number.isFinite(candidate.price) &&
+                  candidate.price > 0
+                );
+              })
+              .map((item) => ({
+                ...item,
+                subtitle: typeof item.subtitle === 'string' ? item.subtitle : undefined,
+                swatch: typeof item.swatch === 'string' ? item.swatch : '#C8892F',
+                quantity: Math.min(
+                  MAX_CART_QUANTITY,
+                  Math.max(1, Math.floor(Number(item.quantity) || 1))
+                ),
+              }))
+          : [];
+        return { ...(persistedState as object), cart } as StoreState;
+      },
     }
   )
 );

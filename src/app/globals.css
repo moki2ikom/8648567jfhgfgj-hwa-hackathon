@@ -195,6 +195,17 @@ button:disabled {
   background-repeat: no-repeat;
 }
 
+.station-canvas canvas {
+  touch-action: pan-y !important;
+}
+
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
