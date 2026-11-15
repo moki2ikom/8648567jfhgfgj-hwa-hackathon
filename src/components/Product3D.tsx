@@ -6,7 +6,6 @@ import {
   Html,
   OrbitControls,
   RoundedBox,
-  Environment,
   ContactShadows,
 } from '@react-three/drei';
 import { Group, Mesh, MeshStandardMaterial, Vector3, Clock } from 'three';
@@ -240,10 +239,10 @@ function FloatingParticles() {
 function AmbientLighting() {
   return (
     <>
-      <ambientLight intensity={0.7} color="#FFF8E7" />
+      <ambientLight intensity={0.55} color="#FFF8E7" />
       <directionalLight
         position={[10, 18, 12]}
-        intensity={1.6}
+        intensity={1.0}
         color="#FFFAE5"
         castShadow
         shadow-mapSize-width={2048}
@@ -268,10 +267,6 @@ function AmbientLighting() {
 function Scene() {
   return (
     <>
-      <Environment
-        preset="studio"
-        background={false}
-      />
       <AmbientLighting />
       <BaseStation />
       <FloatingParticles />
