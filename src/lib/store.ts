@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { product, type Product } from './product';
 
-interface CartItem {
+export interface CartItem {
   id: string;
   name: string;
+  subtitle?: string;
   price: number;
   quantity: number;
-  image: string;
+  swatch: string;
 }
 
 interface StoreState {
@@ -18,6 +18,8 @@ interface StoreState {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   toggleCart: () => void;
+  openCart: () => void;
+  closeCart: () => void;
   getCartTotal: () => number;
   getCartCount: () => number;
 }
@@ -48,14 +50,17 @@ export const useStore = create<StoreState>()(
 
       updateQuantity: (id, quantity) =>
         set((state) => ({
-          cart: quantity <= 0
-            ? state.cart.filter((i) => i.id !== id)
-            : state.cart.map((i) => (i.id === id ? { ...i, quantity } : i)),
+          cart:
+            quantity <= 0
+              ? state.cart.filter((i) => i.id !== id)
+              : state.cart.map((i) => (i.id === id ? { ...i, quantity } : i)),
         })),
 
       clearCart: () => set({ cart: [] }),
 
       toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
+      openCart: () => set({ isCartOpen: true }),
+      closeCart: () => set({ isCartOpen: false }),
 
       getCartTotal: () => {
         const { cart } = get();
@@ -69,7 +74,7 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: 'sniff-solve-cart',
-      version: 1,
+      version: 2,
       partialize: (state) => ({ cart: state.cart }),
     }
   )

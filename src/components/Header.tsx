@@ -1,70 +1,137 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
-import { ShoppingCart, Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useMounted } from '@/lib/use-mounted';
+import { Menu, ShoppingBag, X } from 'lucide-react';
+
+const NAV = [
+  { href: '/#station', label: 'The station', index: '01' },
+  { href: '/#modules', label: 'Modules', index: '02' },
+  { href: '/#scents', label: 'Scent library', index: '03' },
+  { href: '/#build', label: 'Build a kit', index: '04' },
+  { href: '/#notes', label: 'Field notes', index: '05' },
+];
 
 export function Header() {
-  const { getCartCount, toggleCart, isCartOpen } = useStore();
-  const cartCount = getCartCount();
+  const { getCartCount, openCart, isCartOpen } = useStore();
+  const mounted = useMounted();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  const cartCount = mounted ? getCartCount() : 0;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2" aria-label="Sniff & Solve Home">
-              <span className="text-2xl font-bold text-gray-900 tracking-tight">Sniff & Solve</span>
-              <span className="hidden sm:inline-block text-xs font-medium text-amber-600 px-2 py-0.5 rounded-full bg-amber-50">
-                Modular Scent Puzzle System
+    <header className="sticky top-0 z-50 border-b border-ink/15 bg-bone-50/92 backdrop-blur-md">
+      <div className="border-b border-ink/10 bg-ink text-bone-100">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-1.5 font-mono text-[9px] uppercase tracking-[0.22em] sm:px-8">
+          <p>Free shipping over $100</p>
+          <p className="hidden sm:block">60-day nose-back trial · 2-year hardware warranty</p>
+          <p className="text-ochre-light">Station 01 — shipping now</p>
+        </div>
+      </div>
+
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 sm:px-8">
+        <Link href="/" className="group flex items-baseline gap-3" aria-label="Sniff & Solve home">
+          <span className="font-display text-[22px] leading-none tracking-[-0.02em] text-ink sm:text-[25px]">
+            Sniff &amp; Solve
+          </span>
+          <span className="hidden font-mono text-[8px] uppercase leading-tight tracking-[0.24em] text-ink/45 md:block">
+            Olfactory
+            <br />
+            Instruments
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          {NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group flex items-baseline gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/65 transition-colors hover:text-ink"
+            >
+              <span className="text-[8px] text-ochre">{item.index}</span>
+              <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-ink/40">
+                {item.label}
               </span>
             </Link>
+          ))}
+        </nav>
 
-            <div className="hidden md:flex items-center gap-6">
-              <Link href="#product" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-                Product
-              </Link>
-              <Link href="#modules" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-                Modules
-              </Link>
-              <Link href="#reviews" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-                Reviews
-              </Link>
-              <Link href="#faq" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-                FAQ
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleCart}
-              className={cn(
-                'relative p-2 rounded-lg transition-colors',
-                'hover:bg-gray-100',
-                'focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2'
-              )}
-              aria-label={isCartOpen ? 'Close cart' : `Open cart (${cartCount} items)`}
-            >
-              <ShoppingCart className="h-5 w-5 text-gray-700" aria-hidden="true" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">
-                  {cartCount > 99 ? '99+' : cartCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
-              onClick={toggleCart}
-              aria-label="Menu"
-            >
-              {isCartOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/#build"
+            className="hidden rounded-sm border border-ink/25 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors hover:border-ink hover:bg-ink hover:text-bone-50 sm:inline-flex"
+          >
+            Build a kit
+          </Link>
+          <button
+            type="button"
+            onClick={openCart}
+            className="relative flex items-center gap-2 rounded-sm px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/80 transition-colors hover:bg-ink/5 hover:text-ink"
+            aria-label={`Open cart, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}`}
+            aria-haspopup="dialog"
+          >
+            <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Cart</span>
+            <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-ochre px-1 text-[9px] font-semibold leading-none text-ink">
+              {cartCount}
+            </span>
+          </button>
+          <button
+            type="button"
+            className="p-2 text-ink lg:hidden"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
-      </nav>
+      </div>
+
+      {menuOpen && (
+        <nav
+          id="mobile-nav"
+          className="border-t border-ink/15 bg-bone-50 px-5 pb-8 pt-4 lg:hidden"
+          aria-label="Mobile"
+        >
+          <ul className="divide-y divide-ink/10">
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-baseline justify-between py-4 font-display text-2xl text-ink"
+                >
+                  {item.label}
+                  <span className="font-mono text-[10px] text-ochre">{item.index}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => {
+              setMenuOpen(false);
+              openCart();
+            }}
+            className="mt-6 w-full rounded-sm border border-ink/25 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em]"
+          >
+            View cart {isCartOpen ? '' : `(${cartCount})`}
+          </button>
+        </nav>
+      )}
     </header>
   );
 }

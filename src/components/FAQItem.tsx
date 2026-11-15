@@ -1,40 +1,31 @@
-'use client';
-
-import { useState } from 'react';
-import { CheckCircle } from 'lucide-react';
-
-interface FAQItemProps {
+export function FAQItem({
+  question,
+  answer,
+  index,
+}: {
   question: string;
   answer: string;
-}
-
-export function FAQItem({ question, answer }: FAQItemProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
+  index?: number;
+}) {
   return (
-    <details className="group bg-white rounded-xl border border-gray-100 overflow-hidden">
-      <summary
-        className="flex items-center justify-between p-6 cursor-pointer list-none"
-        onClick={(e) => {
-          e.preventDefault();
-          setIsOpen(!isOpen);
-        }}
-      >
-        <h3 className="text-lg font-medium text-gray-900 pr-8">{question}</h3>
-        <svg
-          className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+    <details className="group border-b border-ink/15">
+      <summary className="flex items-start justify-between gap-6 py-6">
+        <span className="flex items-baseline gap-4">
+          {typeof index === 'number' && (
+            <span className="font-mono text-[10px] text-ochre">{String(index + 1).padStart(2, '0')}</span>
+          )}
+          <span className="font-display text-xl leading-snug text-ink sm:text-[22px]">{question}</span>
+        </span>
+        <span className="relative mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center">
+          <span className="absolute h-px w-4 bg-ink" aria-hidden="true" />
+          <span
+            className="absolute h-4 w-px bg-ink transition-transform duration-300 group-open:rotate-90 group-open:opacity-0"
+            aria-hidden="true"
+          />
+        </span>
       </summary>
-      <div
-        className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-      >
-        <div className="px-6 pb-6 text-gray-600 leading-relaxed">{answer}</div>
+      <div className="pb-7 pl-0 sm:pl-8">
+        <p className="max-w-2xl text-[15px] leading-relaxed text-ink-soft">{answer}</p>
       </div>
     </details>
   );

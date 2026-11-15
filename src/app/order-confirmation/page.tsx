@@ -2,285 +2,374 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Header } from '@/components/Header';
-import { Cart } from '@/components/Cart';
-import { Button } from '@/components/Button';
-import { formatPrice } from '@/lib/utils';
-import { product } from '@/lib/product';
 import Link from 'next/link';
 import {
-  CheckCircle,
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Copy,
+  Loader2,
+  MapPin,
+  Package,
   Truck,
-  Mail,
-  Shield,
-  RotateCcw,
-  Star,
-  Sparkles,
 } from 'lucide-react';
+import { Header } from '@/components/Header';
+import { Cart } from '@/components/Cart';
+import { formatPrice } from '@/lib/utils';
 
-function OrderConfirmationContent() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId') || 'SNS-XXXXXX';
-  const total = searchParams.get('total') || '249';
-  const email = searchParams.get('email') || 'customer@example.com';
-  const [showConfetti, setShowConfetti] = useState(false);
+interface OrderLine {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
 
-  useEffect(() => {
-    setShowConfetti(true);
-    const timer = setTimeout(() => setShowConfetti(false), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+interface Order {
+  orderId: string;
+  createdAt: string;
+  status: string;
+  email: string;
+  customer: string;
+  phone: string;
+  address: {
+    line1: string;
+    line2?: string;
+    city: string;
+    region: string;
+    postal: string;
+    country: string;
+  };
+  items: OrderLine[];
+  subtotal: number;
+  shipping: number;
+  shippingMethod: 'standard' | 'express';
+  total: number;
+}
 
-  const estimatedShipDate = new Date();
-  estimatedShipDate.setDate(estimatedShipDate.getDate() + 2);
-  const estimatedDeliveryDate = new Date();
-  estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
+function addDays(date: Date, days: number): string {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    });
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <button
+      type="button"
+      onClick={copy}
+      className="inline-flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/40 transition-colors hover:text-ink"
+      aria-label="Copy order number"
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {copied ? 'Copied' : 'Copy'}
+    </button>
+  );
+}
+
+function ConfirmationContent() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('orderId');
+
+  const [order, setOrder] = useState<Order | null>(null);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>(
+    orderId ? 'loading' : 'missing'
+  );
+
+  useEffect(() => {
+    if (!orderId) return;
+
+    let cancelled = false;
+
+    fetch(`/api/orders/${encodeURIComponent(orderId)}`, { cache: 'no-store' })
+      .then(async (response) => {
+        if (cancelled) return;
+        if (response.status === 404) {
+          setStatus('missing');
+          return;
+        }
+        if (!response.ok) {
+          setStatus('error');
+          return;
+        }
+        const payload = (await response.json()) as Order & { order?: Order };
+        const record = payload.order ?? payload;
+        if (!record.orderId || !Array.isArray(record.items)) {
+          setStatus('error');
+          return;
+        }
+        setOrder(record);
+        setStatus('ready');
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('error');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId]);
+
+  return (
+    <div className="flex min-h-screen flex-col bg-bone-50">
       <Header />
       <Cart />
 
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden" aria-hidden="true">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <ConfettiPiece key={i} index={i} />
-          ))}
-        </div>
-      )}
-
-      <main className="flex-1 py-12 px-4">
+      <main className="flex-1 px-5 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 mb-6">
-              <CheckCircle className="h-10 w-10 text-emerald-600" aria-hidden="true" />
+          {status === 'loading' && (
+            <div className="flex flex-col items-center py-24 text-center">
+              <Loader2 className="h-6 w-6 animate-spin text-ink/40" aria-hidden="true" />
+              <p className="mt-4 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40">
+                Retrieving order record
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Order Confirmed!</h1>
-            <p className="text-lg text-gray-600 mb-2">Thank you for your order, {email.split('@')[0]}! 🐾</p>
-            <p className="text-gray-500">Your Sniff & Solve system is being prepared for shipment.</p>
-          </div>
+          )}
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 mb-8">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <p className="text-sm text-gray-500">Order Number</p>
-                <p className="text-xl font-bold text-gray-900 font-mono">{orderId}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Order Total</p>
-                <p className="text-xl font-bold text-gray-900">${total}</p>
+          {status === 'missing' && (
+            <div className="border border-ink/15 bg-bone-50 p-8 text-center sm:p-12">
+              <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-ochre">No record</p>
+              <h1 className="mt-4 font-display text-3xl sm:text-4xl">That order isn’t here.</h1>
+              <p className="mx-auto mt-4 max-w-md text-[14px] leading-relaxed text-ink-soft">
+                This demo keeps orders in memory on the server, so a record can disappear when the
+                API restarts. If you just placed an order, try the link again in a moment.
+              </p>
+              <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+                <Link
+                  href="/#build"
+                  className="inline-flex items-center justify-center gap-2 rounded-sm bg-ink px-6 py-3.5 font-mono text-[10px] uppercase tracking-[0.16em] text-bone-50 hover:bg-moss"
+                >
+                  Build another kit <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center gap-2 rounded-sm border border-ink/25 px-6 py-3.5 font-mono text-[10px] uppercase tracking-[0.16em] hover:bg-ink hover:text-bone-50"
+                >
+                  Back to the station
+                </Link>
               </div>
             </div>
+          )}
 
-            <div className="grid sm:grid-cols-3 gap-6 mb-8">
-              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                    <Truck className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+          {status === 'error' && (
+            <div className="border border-clay/40 bg-clay/5 p-8 text-center sm:p-12">
+              <AlertCircle className="mx-auto h-8 w-8 text-clay" aria-hidden="true" />
+              <h1 className="mt-4 font-display text-3xl">We couldn’t load that order.</h1>
+              <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-soft">
+                The order service didn’t respond as expected. It’s a demo endpoint, so this can
+                happen after a redeploy.
+              </p>
+              <Link
+                href="/"
+                className="mt-6 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ochre hover:underline"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" /> Return home
+              </Link>
+            </div>
+          )}
+
+          {status === 'ready' && order && (
+            <>
+              <div className="border-b border-ink/15 pb-8">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-moss text-bone-50">
+                    <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
+                  <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-moss">
+                    Demo order recorded
+                  </p>
+                </div>
+                <h1 className="mt-4 font-display text-4xl leading-[0.95] sm:text-5xl">
+                  Good choices, {order.customer.split(' ')[0] || 'friend'}.
+                </h1>
+                <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-ink-soft">
+                  Your station is reserved. No payment was taken — this is a demonstration
+                  checkout, and the order below is what the demo API stored.
+                </p>
+              </div>
+
+              <div className="mt-8 grid gap-px border border-ink/15 bg-ink/15 sm:grid-cols-3">
+                <div className="bg-bone-50 p-5">
+                  <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">Order</p>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <p className="font-mono text-[12px]">{order.orderId}</p>
                   </div>
-                  <div>
-                    <p className="font-medium text-emerald-800">Estimated Ship</p>
-                    <p className="text-sm text-emerald-700">{formatDate(estimatedShipDate)}</p>
+                  <div className="mt-1">
+                    <CopyButton value={order.orderId} />
                   </div>
                 </div>
-              </div>
-              <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <Mail className="h-5 w-5 text-blue-600" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-blue-800">Confirmation Sent</p>
-                    <p className="text-sm text-blue-700">Check your email</p>
-                  </div>
+                <div className="bg-bone-50 p-5">
+                  <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">Total</p>
+                  <p className="mt-2 font-display text-2xl">{formatPrice(order.total)}</p>
+                  <p className="font-mono text-[8px] uppercase tracking-[0.08em] text-ink/40">
+                    Tax included
+                  </p>
+                </div>
+                <div className="bg-bone-50 p-5">
+                  <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">Status</p>
+                  <p className="mt-2 text-[14px] capitalize">{order.status}</p>
+                  <p className="font-mono text-[8px] uppercase tracking-[0.08em] text-ink/40">
+                    Recorded just now
+                  </p>
                 </div>
               </div>
-              <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-amber-600" aria-hidden="true" />
+
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div className="border border-ink/15 bg-bone-50 p-5">
+                  <div className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-ink/45" aria-hidden="true" />
+                    <h2 className="font-mono text-[9px] uppercase tracking-[0.16em]">Estimated arrival</h2>
                   </div>
-                  <div>
-                    <p className="font-medium text-amber-800">90-Day Guarantee</p>
-                    <p className="text-sm text-amber-700">Starts on delivery</p>
+                  <p className="mt-3 font-display text-xl">
+                    {addDays(new Date(order.createdAt), order.shippingMethod === 'express' ? 3 : 6)}
+                  </p>
+                  <p className="mt-1 text-[12px] text-ink-soft">
+                    {order.shippingMethod === 'express' ? 'Express' : 'Standard'} shipping ·{' '}
+                    {order.shipping === 0 ? 'free' : formatPrice(order.shipping)}
+                  </p>
+                  <p className="mt-3 font-mono text-[8px] uppercase leading-relaxed tracking-[0.08em] text-ink/35">
+                    Demo estimate only. A real store would email tracking once the parcel leaves.
+                  </p>
+                </div>
+                <div className="border border-ink/15 bg-bone-50 p-5">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-ink/45" aria-hidden="true" />
+                    <h2 className="font-mono text-[9px] uppercase tracking-[0.16em]">Shipping to</h2>
                   </div>
+                  <address className="mt-3 text-[13px] not-italic leading-relaxed text-ink-soft">
+                    {order.customer}
+                    <br />
+                    {order.address.line1}
+                    {order.address.line2 ? (
+                      <>
+                        <br />
+                        {order.address.line2}
+                      </>
+                    ) : null}
+                    <br />
+                    {order.address.city}, {order.address.region} {order.address.postal}
+                    <br />
+                    {order.address.country}
+                  </address>
                 </div>
               </div>
-            </div>
 
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">What Happens Next</h3>
-              <div className="space-y-4">
-                <StepItem
-                  number={1}
-                  title="Order Processing"
-                  description="We're picking, packing, and preparing your Sniff & Solve system with care."
-                  icon={<Sparkles className="h-5 w-5" />}
-                  completed
-                />
-                <StepItem
-                  number={2}
-                  title="Ships in 1–2 Business Days"
-                  description="You'll receive a tracking email as soon as your order ships."
-                  icon={<Truck className="h-5 w-5" />}
-                />
-                <StepItem
-                  number={3}
-                  title="Delivery & Unboxing"
-                  description="Set up the base station, snap in the modules, and watch your dog discover their new favorite activity."
-                  icon={<Star className="h-5 w-5" />}
-                />
-                <StepItem
-                  number={4}
-                  title="Rotate & Refresh"
-                  description="Swap modules weekly for endless novelty. Order expansion packs anytime."
-                  icon={<RotateCcw className="h-5 w-5" />}
-                />
+              <div className="mt-4 border border-ink/15 bg-bone-50">
+                <div className="flex items-center gap-2 border-b border-ink/15 px-5 py-4">
+                  <Package className="h-4 w-4 text-ink/45" aria-hidden="true" />
+                  <h2 className="font-mono text-[9px] uppercase tracking-[0.16em]">
+                    {order.items.reduce((sum, line) => sum + line.quantity, 0)}{' '}
+                    {order.items.reduce((sum, line) => sum + line.quantity, 0) === 1 ? 'item' : 'items'}
+                  </h2>
+                </div>
+                <ul className="divide-y divide-ink/10 px-5">
+                  {order.items.map((line) => (
+                    <li key={line.id} className="flex items-baseline justify-between gap-4 py-3.5">
+                      <div className="min-w-0">
+                        <p className="text-[13px]">{line.name}</p>
+                        <p className="font-mono text-[8px] uppercase tracking-[0.08em] text-ink/40">
+                          {line.id} · qty {line.quantity}
+                        </p>
+                      </div>
+                      <p className="font-mono text-[11px]">{formatPrice(line.price * line.quantity)}</p>
+                    </li>
+                  ))}
+                </ul>
+                <dl className="space-y-2 border-t border-ink/15 px-5 py-4 font-mono text-[11px]">
+                  <div className="flex justify-between">
+                    <dt className="text-ink/50">Subtotal</dt>
+                    <dd>{formatPrice(order.subtotal)}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-ink/50">Shipping</dt>
+                    <dd>{order.shipping === 0 ? 'Free' : formatPrice(order.shipping)}</dd>
+                  </div>
+                  <div className="flex justify-between border-t border-ink/15 pt-2 text-[13px]">
+                    <dt>Total</dt>
+                    <dd>{formatPrice(order.total)}</dd>
+                  </div>
+                </dl>
               </div>
-            </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-6 sm:p-8 text-center text-white mb-8">
-            <h3 className="text-xl sm:text-2xl font-bold mb-3">Help Your Dog Get Started</h3>
-            <p className="text-amber-100 mb-6 max-w-md mx-auto">
-              Download our free Quick-Start Guide with behaviorist tips for introducing Sniff & Solve,
-              module difficulty progression, and troubleshooting.
-            </p>
-            <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-              Download Guide (PDF)
-            </Button>
-          </div>
+              <div className="mt-8 border border-ink/15 bg-bone-100/60 p-5">
+                <h2 className="font-display text-xl">While you wait</h2>
+                <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
+                  Introduce one module at a time, at the easiest level, for three short sessions
+                  before raising difficulty. Most dogs need the win more than the challenge.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <Link
+                    href="/#modules"
+                    className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-ochre hover:underline"
+                  >
+                    Read the module guide <ArrowRight className="h-3 w-3" />
+                  </Link>
+                  <Link
+                    href="/#notes"
+                    className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-ochre hover:underline"
+                  >
+                    Field notes <ArrowRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </div>
 
-          <div className="text-center space-y-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium"
-            >
-              <RotateCcw className="h-4 w-4" aria-hidden="true" />
-              Continue Shopping
-            </Link>
-            <p className="text-sm text-gray-500">
-              Questions? <a href="#" className="text-amber-600 hover:underline">Contact our support team</a> — we're dog parents too.
-            </p>
-          </div>
+              <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-ink/15 pt-6 sm:flex-row sm:items-center">
+                <p className="font-mono text-[8px] uppercase tracking-[0.1em] text-ink/35">
+                  Demo store · no payment taken · {order.email}
+                </p>
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 rounded-sm border border-ink/25 px-5 py-3 font-mono text-[9px] uppercase tracking-[0.14em] hover:bg-ink hover:text-bone-50"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" /> Back to the station
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </main>
-
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm">© 2024 Sniff & Solve. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
 
-function StepItem({
-  number,
-  title,
-  description,
-  icon,
-  completed = false,
-}: {
-  number: number;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  completed?: boolean;
-}) {
+function ConfirmationSkeleton() {
   return (
-    <div className="flex items-start gap-4">
-      <div className="flex-shrink-0">
-        <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-            completed
-              ? 'bg-emerald-500 text-white'
-              : 'bg-gray-200 text-gray-500'
-          }`}
-        >
-          {completed ? <CheckCircle className="h-5 w-5" aria-hidden="true" /> : number}
+    <div className="flex min-h-screen flex-col bg-bone-50">
+      <Header />
+      <Cart />
+      <main className="flex flex-1 px-5 py-16">
+        <div className="mx-auto w-full max-w-3xl animate-pulse">
+          <div className="h-3 w-32 bg-ink/10" />
+          <div className="mt-6 h-10 w-2/3 bg-ink/10" />
+          <div className="mt-4 h-3 w-1/2 bg-ink/10" />
+          <div className="mt-10 grid gap-px border border-ink/10 bg-ink/10 sm:grid-cols-3">
+            <div className="h-28 bg-bone-100" />
+            <div className="h-28 bg-bone-100" />
+            <div className="h-28 bg-bone-100" />
+          </div>
+          <div className="mt-4 h-56 border border-ink/10 bg-bone-100" />
         </div>
-        {!completed && (
-          <div className="w-0.5 h-16 bg-gray-200 ml-3.5 mt-1" aria-hidden="true" />
-        )}
-      </div>
-      <div className="flex-1 pt-1">
-        <h4 className={`font-medium ${completed ? 'text-gray-900' : 'text-gray-600'}`}>{title}</h4>
-        <p className="text-sm text-gray-500 mt-1">{description}</p>
-      </div>
-      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
-        {icon}
-      </div>
+      </main>
     </div>
-  );
-}
-
-function ConfettiPiece({ index }: { index: number }) {
-  const colors = ['#E8A87C', '#F4C542', '#8FC1E3', '#D4A5D8', '#A8D5BA', '#F0A0A0'];
-  const color = colors[index % colors.length];
-  const left = `${Math.random() * 100}%`;
-  const delay = `${Math.random() * 2}s`;
-  const duration = `${2 + Math.random() * 2}s`;
-  const size = `${6 + Math.random() * 10}px`;
-  const shape = Math.random() > 0.5 ? '50%' : '0';
-
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        left,
-        top: '-20px',
-        width: size,
-        height: size,
-        backgroundColor: color,
-        borderRadius: shape,
-        opacity: 0.8,
-        animation: `fall ${duration} ${delay} ease-in forwards`,
-        transform: `rotate(${Math.random() * 360}deg)`,
-      }}
-      aria-hidden="true"
-    />
   );
 }
 
 export default function OrderConfirmationPage() {
   return (
-    <Suspense fallback={<OrderConfirmationSkeleton />}>
-      <OrderConfirmationContent />
+    <Suspense fallback={<ConfirmationSkeleton />}>
+      <ConfirmationContent />
     </Suspense>
-  );
-}
-
-function OrderConfirmationSkeleton() {
-  return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Header />
-      <Cart />
-      <main className="flex-1 py-12 px-4">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-200 animate-pulse mb-6" />
-            <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-4 animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto animate-pulse" />
-          </div>
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 mb-8 animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4" />
-            <div className="grid sm:grid-cols-3 gap-6">
-              <div className="h-24 bg-gray-200 rounded-xl" />
-              <div className="h-24 bg-gray-200 rounded-xl" />
-              <div className="h-24 bg-gray-200 rounded-xl" />
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
   );
 }

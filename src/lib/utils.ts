@@ -20,11 +20,16 @@ export function generateOrderId(): string {
 }
 
 export function validateEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 }
 
 export function validatePhone(phone: string): boolean {
-  return /^[\d\s\-\(\)\+]{10,}$/.test(phone);
+  const digits = phone.replace(/\D/g, '');
+  return digits.length >= 10 && digits.length <= 15;
+}
+
+export function validatePostal(code: string): boolean {
+  return /^[A-Za-z0-9][A-Za-z0-9\s-]{2,9}$/.test(code.trim());
 }
 
 export const scrollToTop = () => {

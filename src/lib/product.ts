@@ -1,180 +1,339 @@
 export const product = {
   id: 'sniff-solve-core',
   name: 'Sniff & Solve',
-  tagline: 'The Modular Scent Puzzle System',
-  subtitle: 'Hours of engagement. Infinite configurations. One happy dog.',
-  description: `Meet the first truly modular enrichment system designed to keep your dog happily busy for hours while you're away. Sniff & Solve combines scent work, problem-solving, and physical manipulation in a reconfigurable station that never gets old.
+  tagline: 'Modular scent puzzles for dogs who think with their nose.',
+  subtitle: 'Six modules. 720 permutations. One station your dog can never finish.',
+  description:
+    'A machined base station holds six magnetic puzzle modules, each built around a different canine instinct. Rearrange the deck, change the scent, adjust the difficulty, and the puzzle your dog solved last week is gone.',
+  longDescription:
+    'Most enrichment toys are finished in ten minutes and abandoned in ten days. Sniff & Solve is built around rotation instead of novelty: six modules that can be moved, inverted and recombined, four interchangeable scent cartridges, and difficulty settings that scale from a first-sniff puppy to a working scent dog. The base is powder-coated aluminium with a machined lip and non-slip feet. Modules are food-contact copolyester, dishwasher safe, and rated for dogs who destroy everything else.',
 
-Each of the six magnetic modules targets a different canine instinct: tracking, foraging, digging, nose work, paw manipulation, and sequential reasoning. Swap modules in seconds, rearrange the layout weekly, and watch your dog discover new challenges every time.`,
-  longDescription: `Developed with veterinary behaviorists and tested by 200+ dogs, Sniff & Solve addresses the root cause of separation boredom: lack of species-appropriate mental stimulation. Unlike single-mechanism toys that dogs master in minutes, our modular system creates novel puzzles every session.
-
-The base station anchors securely to wall or floor. Modules snap in with satisfying magnetic clicks — no tools, no fuss. Each module is made from FDA-compliant, BPA-free, chew-resistant thermoplastic (rated for power chewers) with stainless-steel hardware. Fabric components are machine-washable; plastic modules are dishwasher-safe (top rack).
-
-Optional companion app (free, no subscription) lets you schedule randomized treat drops, track daily engagement minutes, and get reconfiguration reminders — so the challenge stays fresh even when you're not home to think of it.`,
   price: 249,
   currency: 'USD',
-  images: {
-    hero: '/images/hero.png',
-    gallery: [
-      '/images/gallery-1.png',
-      '/images/gallery-2.png',
-      '/images/gallery-3.png',
-      '/images/gallery-4.png',
-    ],
-    modules: [
-      { id: 'scent-maze', name: 'Scent Maze', image: '/images/module-scent-maze.png' },
-      { id: 'treat-tumble', name: 'Treat Tumble', image: '/images/module-treat-tumble.png' },
-      { id: 'flip-find', name: 'Flip & Find', image: '/images/module-flip-find.png' },
-      { id: 'snuffle-spiral', name: 'Snuffle Spiral', image: '/images/module-snuffle-spiral.png' },
-      { id: 'scent-tubes', name: 'Scent Tubes', image: '/images/module-scent-tubes.png' },
-      { id: 'paw-press', name: 'Paw Press', image: '/images/module-paw-press.png' },
-    ],
-  },
+
+  includes: [
+    'One base station — 480 × 360 mm, powder-coated aluminium',
+    'Six modules: Scent Maze, Treat Tumble, Flip & Find, Snuffle Spiral, Scent Tubes, Paw Press',
+    'Four scent cartridges: peanut, bacon, cheese, liver',
+    'One installed Snuffle Spiral (spare included)',
+    'Wall-mount hardware and four rubber feet',
+    'Field guide: 12 weekly deck configurations',
+    'Two-year hardware warranty and 60-day trial',
+  ],
+
+  stats: [
+    { value: '06', label: 'Puzzle modules' },
+    { value: '720', label: 'Deck permutations' },
+    { value: '04', label: 'Interchangeable scents' },
+    { value: '60', label: 'Day trial, no questions' },
+  ],
+
   modules: [
     {
       id: 'scent-maze',
+      number: '01',
       name: 'Scent Maze',
-      icon: '👃',
-      description: 'Sliding panels reveal interchangeable scent trails. Swap the 4 included scent cartridges (peanut butter, bacon, cheese, liver) or add your own. Dogs track, nudge, and follow the trail to the hidden treat well.',
-      difficulty: 'Beginner → Advanced',
+      code: 'M-01 / TRACK',
+      instinct: 'Tracking & discrimination',
+      difficulty: 2,
       time: '15–30 min',
-      instict: 'Tracking & Scent Discrimination',
+      description:
+        'Sliding panels hide four interchangeable scent trails. The dog follows a line of scent, not a line of sight, and learns to work an edge before committing.',
+      method:
+        'Four cartridges slot under the maze floor. Move a wall, change the reward well, and the same board becomes a different problem.',
+      color: '#B96A4C',
     },
     {
       id: 'treat-tumble',
+      number: '02',
       name: 'Treat Tumble',
-      icon: '🎾',
-      description: 'Three weighted wobble balls dispense kibble at different rates. Adjustable internal baffles let you tune difficulty. Dogs learn to nudge, roll, and strategize — each ball behaves differently.',
-      difficulty: 'Beginner → Intermediate',
+      code: 'M-02 / FORAGE',
+      instinct: 'Foraging & persistence',
+      difficulty: 3,
       time: '10–25 min',
-      instict: 'Foraging & Problem Solving',
+      description:
+        'A clear drum on a brass axle releases kibble at a rate you control. Three internal baffles tune the problem from beginner to genuinely annoying.',
+      method:
+        'Rotate the baffle ring to change how easily treats fall. The drum is transparent, so the dog can see the reward but not the route to it.',
+      color: '#C58F2E',
     },
     {
       id: 'flip-find',
+      number: '03',
       name: 'Flip & Find',
-      icon: '🚪',
-      description: 'Six hinged doors, each with a unique opening mechanism: lift, slide, rotate, press, nudge, and paw-latch. Randomize treat placement behind doors for a new puzzle every session.',
-      difficulty: 'Intermediate → Advanced',
+      code: 'M-03 / MANIPULATE',
+      instinct: 'Manipulation & sequence',
+      difficulty: 4,
       time: '20–40 min',
-      instict: 'Manipulation & Sequential Reasoning',
+      description:
+        'Six hinged lids with six different openings: lift, slide, rotate, press, nudge, latch. Treat placement can be random or patterned.',
+      method:
+        'Each lid has a different resistance and hinge direction. Start with two lids open; add one per week until the dog is working the full row.',
+      color: '#5E7F9C',
     },
     {
       id: 'snuffle-spiral',
+      number: '04',
       name: 'Snuffle Spiral',
-      icon: '🌀',
-      description: 'Replaceable fabric spiral with 30+ hidden pockets. Bury treats deep or shallow. Machine-washable fleece lasts months; replacement spirals cost $12. The ultimate nose-work canvas.',
-      difficulty: 'Beginner → Expert',
+      code: 'M-04 / NOSE',
+      instinct: 'Nose work & persistence',
+      difficulty: 2,
       time: '15–45 min',
-      instict: 'Nose Work & Persistence',
+      description:
+        'A washable fleece coil with 30 hidden pockets. Bury treats deep or shallow and let the dog work the whole length of the spiral.',
+      method:
+        'The spiral is replaceable and machine washable. Compression changes the difficulty: a loose coil is easy, a packed one is real work.',
+      color: '#946F8A',
     },
     {
       id: 'scent-tubes',
+      number: '05',
       name: 'Scent Tubes',
-      icon: '🧪',
-      description: 'Five vertical tubes at varied depths (2–8 inches). Drop treats, smear peanut butter, or insert scent swabs. Dogs must reach, lick, and problem-solve at different angles and depths.',
-      difficulty: 'Intermediate → Advanced',
+      code: 'M-05 / REACH',
+      instinct: 'Vertical reach & dexterity',
+      difficulty: 3,
       time: '10–30 min',
-      instict: 'Vertical Exploration & Dexterity',
+      description:
+        'Six vertical tubes at depths from 60 to 240 mm. Smear, drop or wedge the reward — the dog has to solve the angle as well as the depth.',
+      method:
+        'Brass collars mark each depth. Swap the tube inserts to change bore and difficulty without changing the module.',
+      color: '#6E8A77',
     },
     {
       id: 'paw-press',
+      number: '06',
       name: 'Paw Press',
-      icon: '🐾',
-      description: 'Four large, illuminated buttons. Press the lit sequence to earn a treat — patterns grow from 2 to 6 steps. Teaches cause-effect, memory, and patience. The only module dogs can "learn" progressively.',
-      difficulty: 'Advanced → Expert',
+      code: 'M-06 / SEQUENCE',
+      instinct: 'Cause, effect & impulse',
+      difficulty: 5,
       time: '15–35 min',
-      instict: 'Cognitive Sequencing & Impulse Control',
+      description:
+        'Four large buttons with a soft click. Press the lit sequence to earn a reward; sequences grow from two steps to six.',
+      method:
+        'The only powered module: three AA cells last roughly six months. No app required, no account, no subscription.',
+      color: '#C47968',
     },
   ],
-  specs: {
-    dimensions: 'Base: 24" × 18" × 2.5" | Modules: 6" × 6" × 3" each',
-    weight: 'Base: 8 lbs | Each module: 1.2–1.8 lbs',
-    materials: 'Base: Powder-coated aluminum, non-slip TPE feet\nModules: FDA-compliant copolyester (BPA-free, phthalate-free)\nFabric: 100% polyester fleece, machine washable\nHardware: 316 stainless steel, neodymium magnets (N42)',
-    care: 'Plastic modules: Dishwasher safe (top rack)\nFabric spiral: Machine wash cold, tumble dry low\nBase: Wipe with damp cloth',
-    safety: 'Tested to ASTM F963 (toy safety) & FDA 21 CFR 177.2600 (food contact)\nNo small parts — all components exceed 2.5" minimum dimension\nMagnets fully encapsulated, not accessible',
-    warranty: '2-year limited warranty on base & modules\n90-day satisfaction guarantee\nFree replacement spirals for life (shipping only)',
-    power: 'Paw Press module: 3× AA batteries (6+ months typical)\nAll other modules: Passive, no power needed\nApp: Bluetooth LE, optional, no subscription',
-    compatibility: 'Wall mount (hardware included) or floor stand\nIndoor use only\nSuitable for dogs 15–100+ lbs',
-  },
-  includes: [
-    '1× Sniff & Solve Base Station (wall/floor mount)',
-    '6× Puzzle Modules (one of each type)',
-    '4× Scent Cartridges (peanut butter, bacon, cheese, liver)',
-    '1× Snuffle Spiral (installed)',
-    'Wall-mount hardware kit + floor-standing feet',
-    'Quick-start guide + behaviorist tips booklet',
-    'Free companion app (iOS/Android)',
+
+  scents: [
+    {
+      code: 'S-01',
+      name: 'Roasted peanut',
+      notes: 'Warm legume · toasted shell · low smoke',
+      intensity: 3,
+      color: '#C8892F',
+      use: 'The reliable start. High value, low confusion.',
+    },
+    {
+      code: 'S-02',
+      name: 'Smoked bacon',
+      notes: 'Cured pork · birch smoke · salt',
+      intensity: 5,
+      color: '#B96A4C',
+      use: 'For dogs who need a louder invitation.',
+    },
+    {
+      code: 'S-03',
+      name: 'Aged cheese',
+      notes: 'Sharp dairy · rind · faint ammonia',
+      intensity: 4,
+      color: '#C58F2E',
+      use: 'A long trail that rewards patience.',
+    },
+    {
+      code: 'S-04',
+      name: 'Dried liver',
+      notes: 'Iron · dried herb · deep mineral',
+      intensity: 5,
+      color: '#946F8A',
+      use: 'The final cartridge. Use sparingly.',
+    },
   ],
+
+  specSheet: [
+    { label: 'Base', value: '480 × 360 × 45 mm, powder-coated aluminium, 3.6 kg' },
+    { label: 'Modules', value: '150 × 150 × 40–90 mm, food-contact copolyester, 0.5–0.8 kg' },
+    { label: 'Deck', value: 'Six recessed bays, N42 magnets, 2.2 kg pull per bay' },
+    { label: 'Fabric', value: 'Recycled polyester fleece, machine washable at 30°C' },
+    { label: 'Hardware', value: '316 stainless steel, brass collars, TPE feet' },
+    { label: 'Power', value: 'Paw Press only: 3 × AA, approximately 6 months' },
+    { label: 'Safety', value: 'No loose magnets. No small parts. Tool-secured battery bay.' },
+    { label: 'Care', value: 'Modules top-rack dishwasher safe. Base wipes clean.' },
+  ],
+
+  specs: {
+    dimensions: 'Base 480 × 360 × 45 mm · Modules 150 × 150 mm',
+    weight: 'Base 3.6 kg · Modules 0.5–0.8 kg each',
+    materials: 'Powder-coated aluminium, food-contact copolyester, recycled fleece, stainless steel',
+    care: 'Modules: top-rack dishwasher. Fleece: machine wash cold. Base: damp cloth.',
+    safety: 'No loose magnets, no accessible batteries, no small parts',
+    warranty: '2 years on base and modules · 60-day trial · free spiral replacement',
+    power: 'Paw Press: 3 × AA (included) · all other modules passive',
+    compatibility: 'Floor-standing or wall-mounted · dogs 6 kg and up',
+  },
+
+  comparison: [
+    {
+      feature: 'Reconfigurable puzzle',
+      station: 'Six bays, 720 permutations',
+      snuffle: 'Single layout',
+      ball: 'Single mechanism',
+      puzzle: 'Fixed board',
+    },
+    {
+      feature: 'Scent work',
+      station: 'Four cartridges',
+      snuffle: 'Treats only',
+      ball: 'Treats only',
+      puzzle: 'Treats only',
+    },
+    {
+      feature: 'Difficulty scaling',
+      station: 'Five levels per module',
+      snuffle: 'Packing density',
+      ball: 'Baffle only',
+      puzzle: 'One level',
+    },
+    {
+      feature: 'Solo-safe',
+      station: 'Yes',
+      snuffle: 'Yes',
+      ball: 'Yes',
+      puzzle: 'Supervised',
+    },
+    {
+      feature: 'Dishwasher-safe parts',
+      station: 'All modules',
+      snuffle: 'No',
+      ball: 'Some',
+      puzzle: 'No',
+    },
+    {
+      feature: 'Warranty',
+      station: '2 years',
+      snuffle: '30 days',
+      ball: '1 year',
+      puzzle: 'None',
+    },
+  ],
+
   faq: [
     {
-      q: 'My dog destroys toys. Will this survive?',
-      a: 'Yes. Modules are molded from the same copolyester used in premium dog chews (like West Paw Zogoflex). Tested with 50+ power chewers — zero structural failures. The base is powder-coated aluminum. If your dog somehow damages a module, our 2-year warranty covers it.',
+      q: 'My dog destroys everything. Will this survive?',
+      a: 'The base is powder-coated aluminium and the modules are moulded from the same copolyester used in premium chew toys. We beta-tested with 214 households, including 38 self-described power-chewer homes; no module was structurally damaged. If one is, the two-year warranty replaces it.',
     },
     {
-      q: 'How long does it really keep them busy?',
-      a: 'In our 8-week pilot (n=200), median engagement was 47 minutes per session with all 6 modules active. Dogs returned for 3–4 sessions/day voluntarily. The key is rotation: swap 2 modules weekly and engagement stays high for months.',
+      q: 'How long does it actually keep a dog busy?',
+      a: 'In our 214-household beta, a full six-module deck produced a median first-session engagement of 41 minutes, with dogs returning for two or three shorter sessions a day. The number that matters is week six: households that changed two modules weekly reported engagement staying roughly flat, while households that left the deck unchanged reported a drop after ten days.',
     },
     {
       q: 'Is the app required?',
-      a: 'Not at all. The system works completely offline. The app only adds: randomized treat scheduling (Paw Press), daily engagement logs, and reconfiguration reminders. No subscription, no account needed — just pair via Bluetooth.',
+      a: 'There is no app. Paw Press runs on three AA cells and holds its sequence locally. Nothing needs pairing, an account or a subscription.',
     },
     {
       q: 'Can I buy modules separately?',
-      a: 'Yes. Each module sells for $39 individually, or get the 6-module Expansion Pack for $199 (save $35). Replacement spirals are $12. Scent cartridges (4-pack): $18.',
+      a: 'Yes. Single modules are $39, the six-module Expansion Pack is $199, replacement spirals are $12, and the four-cartridge scent pack is $18. Every module fits every base.',
     },
     {
-      q: 'What if my dog figures it out too fast?',
-      a: 'That\'s the point of modularity. Flip & Find has 720 door/treat combinations. Treat Tumble baffles adjust across 5 difficulty levels. Paw Press sequences scale to 6 steps. Scent cartridges are interchangeable. You control the difficulty curve.',
+      q: 'What if my dog solves it too fast?',
+      a: 'That is the design brief. Flip & Find has 720 treat-and-lid permutations; Treat Tumble has three baffle settings; Paw Press sequences grow to six steps; scent cartridges change the information, not just the difficulty. The field guide includes twelve weekly deck configurations.',
     },
     {
-      q: 'Is it safe for unsupervised use?',
-      a: 'Yes. No small parts, no cords, no pinch points, no batteries accessible to dog (Paw Press battery compartment is tool-secured). All materials are food-contact safe. We recommend supervising the first 2–3 sessions, then it\'s designed for solo play.',
+      q: 'Is it safe to leave a dog alone with it?',
+      a: 'Yes, with one caveat: supervise the first two or three sessions so you can see how your dog works. There are no cords, no loose magnets, no accessible batteries and no parts small enough to swallow. Paw Press is the only module with a battery bay, and it is secured with a tool-fastened plate.',
+    },
+    {
+      q: 'What does the trial cover?',
+      a: 'Sixty days from delivery. If your dog loses interest, email us and we refund the order and pay return shipping. The only thing we ask is that you try at least three different deck configurations first — rotation is the product.',
+    },
+    {
+      q: 'Where do you ship?',
+      a: 'The United States, Canada, the UK, the EU and Australia. Orders over $100 ship free. Express delivery is available at checkout. This is a demo store: no payment is taken and no physical order ships.',
     },
   ],
+
   reviews: [
     {
       id: 1,
-      name: 'Sarah M.',
-      dog: 'Border Collie, 3 yrs',
+      name: 'Mara Ellison',
+      dog: 'Border collie, 3',
+      city: 'Portland, OR',
       rating: 5,
-      text: 'My BC would destroy the house when I left. First day with Sniff & Solve: 52 minutes of focused work, then she napped for 3 hours. It\'s been 6 weeks and she still gets excited when I set it up. The module rotation is genius — she never masters it completely.',
-      verified: true,
+      date: 'October 2026',
+      household: 'Beta household 041',
+      title: 'The rotation is the whole thing',
+      text: 'We started with the maze and the spiral. By week three she was opening the Flip & Find latches without a treat behind them — she just wanted to check. The difference from our old snuffle mat is that I can make it harder without buying a new object. Week six and she still checks the deck when I walk past it.',
     },
     {
       id: 2,
-      name: 'James R.',
-      dog: 'Labrador, 5 yrs',
+      name: 'Daniel Okafor',
+      dog: 'Labrador, 5',
+      city: 'Manchester, UK',
       rating: 5,
-      text: 'Skeptical at $249 but worth every penny. Lab is a power chewer — zero damage after 2 months. He\'s figured out Flip & Find so we cranked the difficulty. Treat Tumble on level 4 keeps him busy 35+ mins. Customer service replaced a lost scent cartridge free.',
-      verified: true,
+      date: 'September 2026',
+      household: 'Beta household 178',
+      title: 'Survived a labrador',
+      text: 'I bought it expecting to be disappointed by the plastic. Two months in, the tumble drum has a few scuffs and everything else looks new. The brass axle and the weight of the base are what sold me — it does not slide across the floor when he gets enthusiastic.',
     },
     {
       id: 3,
-      name: 'Dr. Patricia V., DVM',
-      dog: 'Mixed breed, 4 yrs',
-      rating: 5,
-      text: 'As a veterinary behaviorist, I recommend this to separation-anxiety clients. It hits all the right enrichment categories: olfactory, cognitive, physical. The modularity prevents habituation — the #1 failure mode of enrichment toys. Clinically sound design.',
-      verified: true,
+      name: 'Priya Raman',
+      dog: 'Mixed, 8',
+      city: 'Toronto, ON',
+      rating: 4,
+      date: 'September 2026',
+      household: 'Beta household 096',
+      title: 'Good for an older dog',
+      text: 'Our dog is eight and mostly deaf, so scent is how she still gets information about the world. The tubes are her favourite. I took one star off because the Paw Press is too much for her joints, but the modular design means we simply leave that bay empty.',
     },
     {
       id: 4,
-      name: 'Amanda K.',
-      dog: 'French Bulldog, 2 yrs',
-      rating: 4,
-      text: 'Frenchie loves the Snuffle Spiral and Scent Tubes. Paw Press is too advanced for her (brachycephalic, hard to press buttons firmly). Would love a "lite" version of that module. Otherwise fantastic — she\'s calm when I leave now.',
-      verified: true,
+      name: 'Jonas Weber',
+      dog: 'Miniature schnauzer, 2',
+      city: 'Berlin, DE',
+      rating: 5,
+      date: 'August 2026',
+      household: 'Beta household 212',
+      title: 'Finally, something he cannot finish',
+      text: 'He solved every puzzle we owned in a week. The scent cartridges were the missing piece — the same maze becomes a new problem when the trail changes. The field guide is genuinely useful; we are on configuration nine.',
     },
   ],
+
+  guarantee: [
+    {
+      title: '60-day nose-back trial',
+      text: 'Try three deck configurations. If your dog is not interested, we refund the order and pay the return shipping.',
+    },
+    {
+      title: '2-year hardware warranty',
+      text: 'Base, magnets, hinges and collars are covered. If a module fails, we replace it, not the whole station.',
+    },
+    {
+      title: 'Spare spirals, free',
+      text: 'Fleece wears out before hardware does. Replacement spirals are free for the life of the station; you cover shipping.',
+    },
+  ],
+
   shipping: {
     freeThreshold: 100,
     standard: { price: 9, days: '5–7 business days' },
     express: { price: 19, days: '2–3 business days' },
     international: { price: 29, days: '7–14 business days' },
   },
+
+  images: {
+    hero: '/images/hero.svg',
+    gallery: [
+      '/images/gallery-1.svg',
+      '/images/gallery-2.svg',
+      '/images/gallery-3.svg',
+      '/images/gallery-4.svg',
+    ],
+  },
 };
 
 export type Product = typeof product;
-export type Module = typeof product.modules[0];
-export type Review = typeof product.reviews[0];
-export type FAQ = typeof product.faq[0];
+export type Module = (typeof product.modules)[0];
+export type Review = (typeof product.reviews)[0];
+export type FAQ = (typeof product.faq)[0];
 export type Specs = typeof product.specs;

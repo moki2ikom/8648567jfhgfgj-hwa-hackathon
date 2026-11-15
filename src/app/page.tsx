@@ -1,334 +1,170 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
+import Link from 'next/link';
+import { ArrowRight, ArrowUpRight, Check, Star } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Cart } from '@/components/Cart';
 import { Product3D } from '@/components/Product3D';
 import { Button } from '@/components/Button';
 import { FAQItem } from '@/components/FAQItem';
 import { CTA } from '@/components/CTA';
+import { Reveal } from '@/components/Reveal';
+import { ModuleGlyph } from '@/components/ModuleGlyph';
+import { StationDiagram } from '@/components/StationDiagram';
+import { KitConfigurator } from '@/components/KitConfigurator';
 import { product } from '@/lib/product';
+import { catalog } from '@/lib/catalog';
 import { formatPrice } from '@/lib/utils';
-import Link from 'next/link';
-import {
-  CheckCircle,
-  Truck,
-  RotateCcw,
-  Shield,
-  Star,
-  Sparkles,
-  Brain,
-  Heart,
-  Zap,
-  PawPrint,
-  Award,
-  Users,
-  Clock,
-  Leaf,
-  ShieldCheck,
-} from 'lucide-react';
+import { useStore } from '@/lib/store';
 
-const benefits = [
-  {
-    icon: Brain,
-    title: 'Mental Enrichment',
-    description: 'Six distinct puzzle types target every canine cognitive domain — tracking, foraging, manipulation, sequencing, nose work, and persistence.',
-    accent: 'from-amber-500 to-orange-500',
-    bg: 'from-amber-50 to-orange-50',
-    hover: 'hover:from-amber-100 hover:to-orange-100',
-  },
-  {
-    icon: Sparkles,
-    title: 'Never Gets Old',
-    description: 'Magnetic modules swap in seconds. Reconfigure weekly for novel challenges that prevent habituation — the #1 reason dogs lose interest in toys.',
-    accent: 'from-yellow-500 to-amber-500',
-    bg: 'from-yellow-50 to-amber-50',
-    hover: 'hover:from-yellow-100 hover:to-amber-100',
-  },
-  {
-    icon: Heart,
-    title: 'Calmer Departures',
-    description: 'In our 8-week pilot, 94% of dogs showed reduced separation behaviors. Engaged dogs don\'t destroy — they solve, sniff, and nap.',
-    accent: 'from-rose-500 to-pink-500',
-    bg: 'from-rose-50 to-pink-50',
-    hover: 'hover:from-rose-100 hover:to-pink-100',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Built for Power Chewers',
-    description: 'FDA-compliant copolyester withstands 200+ lb bite force. 2-year warranty. If they break it, we replace it — no questions.',
-    accent: 'from-emerald-500 to-teal-500',
-    bg: 'from-emerald-50 to-teal-50',
-    hover: 'hover:from-emerald-100 hover:to-teal-100',
-  },
-];
+function SectionLabel({ index, children }: { index: string; children: React.ReactNode }) {
+  return (
+    <p className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.26em] text-ink/50">
+      <span className="text-ochre">{index}</span>
+      <span className="h-px w-8 bg-ink/25" aria-hidden="true" />
+      {children}
+    </p>
+  );
+}
 
-const stats = [
-  { value: '47', suffix: ' min', label: 'Median session engagement', icon: Clock },
-  { value: '94', suffix: '%', label: 'Dogs with reduced anxiety', icon: Heart },
-  { value: '720', suffix: '+', label: 'Unique puzzle combinations', icon: Sparkles },
-  { value: '2', suffix: ' yr', label: 'Warranty coverage', icon: ShieldCheck },
-];
-
-const trustBadges = [
-  { icon: Award, text: 'Vet Recommended', desc: 'Designed with behaviorists' },
-  { icon: ShieldCheck, text: 'Safety Certified', desc: 'ASTM F963 & FDA compliant' },
-  { icon: Users, text: '10,000+ Dogs', desc: 'Happy customers worldwide' },
-  { icon: Leaf, text: 'Eco-Conscious', desc: 'Recyclable materials' },
-];
+function Difficulty({ value, color }: { value: number; color: string }) {
+  return (
+    <span className="flex items-center gap-[3px]" aria-label={`Difficulty ${value} of 5`}>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <span
+          key={index}
+          className="h-[5px] w-[5px] rounded-full"
+          style={{ backgroundColor: index < value ? color : 'rgba(23,21,15,0.14)' }}
+        />
+      ))}
+    </span>
+  );
+}
 
 function Hero() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { addToCart, openCart } = useStore();
+  const [selected, setSelected] = useState<string | null>(null);
+  const core = catalog['kit-core'];
+  const active = product.modules.find((module) => module.id === selected);
+
+  const addCore = () => {
+    addToCart({
+      id: core.id,
+      name: core.name,
+      subtitle: core.subtitle,
+      price: core.price,
+      swatch: core.swatch,
+    });
+    openCart();
+  };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50 via-white to-white pt-16">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-100/50 via-transparent to-transparent" aria-hidden="true" />
-      <div className="absolute inset-0 opacity-[0.04] bg-[url('/images/pattern.svg')]" aria-hidden="true" />
-      {mounted && (
-        <>
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-amber-200/30 to-transparent rounded-full blur-3xl animate-blob" aria-hidden="true" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-yellow-200/30 to-transparent rounded-full blur-3xl animate-blob animation-delay-2000" aria-hidden="true" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-120 h-120 bg-gradient-to-r from-amber-200/10 to-transparent rounded-full blur-3xl animate-pulse-slow" aria-hidden="true" />
-        </>
-      )}
+    <section className="relative overflow-hidden border-b border-ink/15">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 lg:grid-cols-12">
+        <div className="relative order-2 px-5 py-14 sm:px-8 lg:order-1 lg:col-span-5 lg:border-r lg:border-ink/15 lg:py-20 lg:pr-10">
+          <div className="animate-rise">
+            <SectionLabel index="01">The instrument</SectionLabel>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="text-center lg:text-left animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-700 text-sm font-medium mb-6 border border-amber-100">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-              </span>
-              <span>New: Modular Scent Puzzle System</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 tracking-tight leading-[1.05] mb-6">
-              Keep Your Dog{' '}
-              <span className="relative inline-block">
-                <span className="relative z-10 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Happily Busy</span>
-                <span className="absolute bottom-1 left-0 right-0 h-8 bg-gradient-to-r from-amber-200 to-orange-200 opacity-60 -z-10 rounded-full" aria-hidden="true" />
-              </span>{' '}
-              for Hours
+            <h1 className="mt-8 max-w-xl font-display text-[46px] leading-[0.96] tracking-[-0.03em] text-ink sm:text-6xl lg:text-[68px]">
+              A nose-led puzzle that <em className="font-light italic underline-ochre">redraws</em> itself
+              every week.
             </h1>
 
-            <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              The first truly modular enrichment system. Six magnetic puzzle modules.
-              Infinite configurations. One happy dog — even when you're away.
+            <p className="mt-7 max-w-md text-[15px] leading-relaxed text-ink-soft sm:text-base">
+              Six magnetic scent modules on a machined base. Rearrange the deck, change the
+              cartridge, raise the difficulty — and the puzzle your dog solved yesterday is gone.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-12">
-              <Button size="lg" className="w-full sm:w-auto group relative overflow-hidden" onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })}>
-                <span className="relative flex items-center gap-2">Get Sniff & Solve</span>
-                <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button size="lg" onClick={addCore} className="group">
+                Add the station — {formatPrice(core.price)}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 border-gray-300 hover:border-amber-500 hover:bg-amber-50 hover:text-amber-700" onClick={() => document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' })}>
-                Explore Modules
-              </Button>
+              <a
+                href="#station"
+                className="inline-flex items-center justify-center gap-2 border border-ink/25 px-7 py-4 font-mono text-[10px] uppercase tracking-[0.16em] text-ink transition-colors hover:border-ink hover:bg-ink hover:text-bone-50"
+              >
+                See the deck
+              </a>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-sm text-gray-500">
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/80 rounded-xl border border-gray-100 backdrop-blur-sm">
-                <CheckCircle className="h-5 w-5 text-emerald-500" aria-hidden="true" />
-                <span className="font-medium text-gray-700">Free shipping over $100</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/80 rounded-xl border border-gray-100 backdrop-blur-sm">
-                <RotateCcw className="h-5 w-5 text-emerald-500" aria-hidden="true" />
-                <span className="font-medium text-gray-700">90-day satisfaction guarantee</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/80 rounded-xl border border-gray-100 backdrop-blur-sm">
-                <Truck className="h-5 w-5 text-emerald-500" aria-hidden="true" />
-                <span className="font-medium text-gray-700">Ships in 1–2 business days</span>
-              </div>
-            </div>
-          </div>
+            <p className="mt-4 font-mono text-[9px] uppercase tracking-[0.14em] text-ink/40">
+              Core system · six modules · four scents · free shipping
+            </p>
 
-          <div className="relative animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <div className="relative aspect-square max-w-md mx-auto lg:max-w-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-yellow-100/50 rounded-3xl blur-2xl opacity-50" aria-hidden="true" />
-              <div className="relative rounded-3xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
-                <Product3D />
-              </div>
-              <div className="absolute -bottom-8 -left-8 -right-8 -top-8 bg-gradient-to-t from-white/60 to-transparent rounded-3xl pointer-events-none" aria-hidden="true" />
-            </div>
-
-            <div className="mt-8 flex items-center justify-center gap-8 text-sm">
-              <div className="flex items-center gap-2 text-gray-600">
-                <PawPrint className="h-5 w-5 text-amber-500" aria-hidden="true" />
-                <span className="font-medium text-gray-900">Designed for dogs 15–100+ lbs</span>
-              </div>
-              <div className="w-px h-6 bg-gray-200" aria-hidden="true" />
-              <div className="flex items-center gap-2 text-gray-600">
-                <Award className="h-5 w-5 text-amber-500" aria-hidden="true" />
-                <span className="font-medium text-gray-900">Veterinary behaviorist approved</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" aria-hidden="true" />
-    </section>
-  );
-}
-
-function Benefits() {
-  return (
-    <section id="benefits" className="py-24 bg-white relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-50/30 to-transparent" aria-hidden="true" />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium mb-4">Why It Works</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-            Six Instincts.{' '}
-            <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">One System.</span>
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Most toys fail because they only engage one instinct. Ours engages six — and changes every week.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {benefits.map((benefit, index) => (
-            <BenefitCard key={index} benefit={benefit} delay={index * 100} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function BenefitCard({ benefit, delay }: { benefit: typeof benefits[0]; delay: number }) {
-  return (
-    <div
-      className={`group relative p-7 rounded-3xl bg-gradient-to-br ${benefit.bg} ${benefit.hover} transition-all duration-500 border border-transparent group-hover:border-amber-100 group-hover:shadow-xl`}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: benefit.accent }} aria-hidden="true" />
-      <div className="relative z-10">
-        <div className="w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 border border-gray-100">
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center`} style={{ background: benefit.accent }}>
-            <benefit.icon className="h-5 w-5 text-white" aria-hidden="true" />
-          </div>
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-amber-700 transition-colors">{benefit.title}</h3>
-        <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: benefit.accent }} aria-hidden="true" />
-    </div>
-  );
-}
-
-function Stats() {
-  const [counters, setCounters] = useState<Record<string, number>>({});
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            stats.forEach((stat) => {
-              const target = parseInt(stat.value);
-              let current = 0;
-              const increment = target / 60;
-              const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                  current = target;
-                  clearInterval(timer);
-                }
-                setCounters((prev) => ({ ...prev, [stat.label]: Math.floor(current) }));
-              }, 20);
-            });
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <section ref={sectionRef} className="py-20 bg-gray-900 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-[0.03]" aria-hidden="true" />
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" aria-hidden="true" />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-4 bg-gray-800" aria-hidden="true" />
-              <div className="relative">
-                <stat.icon className="h-10 w-10 mx-auto mb-4 text-amber-500/80" aria-hidden="true" />
-                <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-2 tracking-tight">
-                  {counters[stat.label] !== undefined ? counters[stat.label] : stat.value}{stat.suffix}
+            <dl className="mt-10 grid grid-cols-2 gap-px border border-ink/15 bg-ink/15 sm:grid-cols-4">
+              {product.stats.map((stat) => (
+                <div key={stat.label} className="bg-bone-50 px-3 py-4">
+                  <dt className="sr-only">{stat.label}</dt>
+                  <dd>
+                    <span className="block font-display text-2xl leading-none">{stat.value}</span>
+                    <span className="mt-1.5 block font-mono text-[8px] uppercase leading-tight tracking-[0.1em] text-ink/45">
+                      {stat.label}
+                    </span>
+                  </dd>
                 </div>
-                <div className="text-gray-400 text-sm sm:text-base font-medium">{stat.label}</div>
-              </div>
-            </div>
-          ))}
+              ))}
+            </dl>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function ProductShowcase() {
-  return (
-    <section id="product" className="py-24 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div className="sticky top-28">
-            <div className="relative aspect-square rounded-3xl bg-gradient-to-br from-amber-50 to-amber-100 overflow-hidden">
-              <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-[0.05]" aria-hidden="true" />
-              <div className="relative rounded-3xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
-                <Product3D />
+        <div className="relative order-1 border-b border-ink/15 bg-bone-100 lg:order-2 lg:col-span-7 lg:border-b-0">
+          <div className="pointer-events-none absolute inset-0 grid-paper opacity-60" aria-hidden="true" />
+          <div className="pointer-events-none absolute left-4 top-4 z-10 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/45">
+            Plate I / The station
+          </div>
+          <div className="pointer-events-none absolute right-4 top-4 z-10 text-right font-mono text-[9px] uppercase leading-relaxed tracking-[0.16em] text-ink/45">
+            06 modules
+            <br />
+            01 deck
+          </div>
+
+          <div className="relative h-[420px] w-full sm:h-[520px] lg:h-[660px]">
+            <Product3D selected={selected} onSelect={(id) => setSelected((current) => (current === id ? null : id))} />
+          </div>
+
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-10 sm:inset-x-6">
+            <div className="flex items-end justify-between gap-4 border-t border-ink/20 pt-3">
+              {active ? (
+                <div className="min-w-0">
+                  <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-ochre">
+                    {active.number} — {active.code}
+                  </p>
+                  <p className="mt-1 font-display text-xl leading-none sm:text-2xl">{active.name}</p>
+                  <p className="mt-1.5 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/45">
+                    {active.instinct} · {active.time}
+                  </p>
+                </div>
+              ) : (
+                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink/45">
+                  Click a module to inspect it
+                </p>
+              )}
+              <div className="hidden shrink-0 text-right font-mono text-[8px] uppercase leading-relaxed tracking-[0.12em] text-ink/40 sm:block">
+                Scale 1:2
+                <br />
+                Graphite / brass
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="space-y-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <div>
-              <span className="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-sm font-medium mb-4">The Core System</span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mt-2 mb-4 tracking-tight">{product.name}</h2>
-              <p className="text-lg text-gray-600 mb-6 font-medium text-amber-700">{product.tagline}</p>
-              <p className="text-gray-600 mb-8 text-lg leading-relaxed">{product.description}</p>
-
-              <div className="space-y-4 mb-10">
-                {product.includes.map((item, index) => (
-                  <div key={index} className="flex items-start gap-4 group">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 group-hover:scale-110 transition-all duration-300">
-                      <CheckCircle className="h-5 w-5 text-emerald-500" aria-hidden="true" />
-                    </div>
-                    <span className="text-gray-700 text-lg leading-relaxed pt-1">{item}</span>
-                  </div>
+      <div className="border-t border-ink/15 bg-bone-100">
+        <div className="mx-auto flex max-w-[1400px] items-center gap-6 overflow-hidden px-5 py-3 sm:px-8">
+          <span className="shrink-0 font-mono text-[8px] uppercase tracking-[0.2em] text-ink/40">Method</span>
+          <div className="flex min-w-max animate-marquee items-center gap-8 font-mono text-[9px] uppercase tracking-[0.22em] text-ink/60">
+            {Array.from({ length: 2 }).map((_, loop) => (
+              <div key={loop} className="flex items-center gap-8" aria-hidden={loop === 1}>
+                {['Scent', 'Search', 'Solve', 'Settle', 'Reset'].map((word) => (
+                  <span key={word} className="flex items-center gap-8">
+                    {word}
+                    <span className="h-1 w-1 rounded-full bg-ochre" />
+                  </span>
                 ))}
               </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="w-full sm:w-auto group relative overflow-hidden" onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })}>
-                  <span className="relative flex items-center gap-2">Add to Cart — {formatPrice(product.price)}</span>
-                  <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Button>
-                <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 border-gray-300 hover:border-amber-500 hover:bg-amber-50 hover:text-amber-700" onClick={() => document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' })}>
-                  View All Modules
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-100">
-              <PriceCard price={formatPrice(product.price)} label="Core System" featured />
-              <PriceCard price="$199" label="Expansion Pack (6 modules)" />
-              <PriceCard price="$12" label="Snuffle Spiral Refill" />
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -336,186 +172,591 @@ function ProductShowcase() {
   );
 }
 
-function PriceCard({ price, label, featured = false }: { price: string; label: string; featured?: boolean }) {
+function Science() {
   return (
-    <div className={`relative text-center p-6 rounded-2xl transition-all duration-300 ${
-      featured
-        ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg hover:shadow-xl'
-        : 'bg-gray-50 hover:bg-gray-100 border border-gray-100'
-    }`}>
-      {featured && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider">
-          Most Popular
+    <section id="science" className="border-b border-ink/15">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-28">
+        <div className="lg:col-span-5">
+          <Reveal>
+            <SectionLabel index="02">The principle</SectionLabel>
+            <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
+              Dogs don’t play
+              <br />
+              with their eyes.
+            </h2>
+            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-soft">
+              A toy that looks interesting to us can be almost invisible to a dog. Scent is the
+              channel they trust: roughly forty times the olfactory cortex of a human, and a nose
+              that can separate a trail into layers.
+            </p>
+            <div className="mt-8 border-l-2 border-ochre pl-5">
+              <p className="font-display text-xl leading-snug text-ink sm:text-[26px]">
+                “A puzzle your dog can finish is a puzzle they stop using. This one is designed to
+                stay unfinished.”
+              </p>
+              <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/45">
+                Design principle no. 1
+              </p>
+            </div>
+          </Reveal>
         </div>
-      )}
-      <div className="text-3xl font-bold mb-1">{price}</div>
-      <div className={`text-sm ${featured ? 'text-amber-100' : 'text-gray-500'}`}>{label}</div>
-    </div>
+
+        <div className="lg:col-span-7">
+          <Reveal delay={100}>
+            <p className="max-w-2xl text-[15px] leading-relaxed text-ink-soft first-letter:float-left first-letter:mr-3 first-letter:font-display first-letter:text-6xl first-letter:leading-[0.8] first-letter:text-ink">
+              Enrichment fails for a boring reason: habituation. A dog masters a treat ball in a
+              week, and after that the object carries no new information. The station treats
+              novelty as a schedule rather than a feature. Every bay accepts every module, so the
+              problem space can be rebuilt without buying another object. The scent cartridges
+              change what the puzzle is asking, not just how hard it is.
+            </p>
+          </Reveal>
+
+          <div className="mt-10 divide-y divide-ink/15 border-y border-ink/15">
+            {[
+              {
+                n: '01',
+                title: 'Scent is the doorway',
+                text: 'Nose work asks a dog to gather information with the sense they already use to read a room. It is tiring in a different way from running.',
+              },
+              {
+                n: '02',
+                title: 'Novelty needs a schedule',
+                text: 'Change two modules and one cartridge each week. The deck stays familiar; the problem does not.',
+              },
+              {
+                n: '03',
+                title: 'Solving is rest',
+                text: 'A focused scent session can settle a dog the way a long walk does — with less wear on joints and far less furniture.',
+              },
+            ].map((item) => (
+              <div key={item.n} className="grid grid-cols-[40px_1fr] gap-4 py-5 sm:grid-cols-[56px_1fr]">
+                <span className="font-mono text-[10px] text-ochre">{item.n}</span>
+                <div>
+                  <h3 className="font-display text-xl leading-tight">{item.title}</h3>
+                  <p className="mt-1.5 max-w-lg text-[14px] leading-relaxed text-ink-soft">{item.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-5 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-ink/40">
+            Built with input from three working scent-detection trainers and a veterinary
+            behaviour consultant.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StationSection() {
+  const { addToCart, openCart } = useStore();
+  const core = catalog['kit-core'];
+
+  return (
+    <section id="station" className="border-b border-ink/15 bg-bone-100">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-28">
+        <div className="lg:col-span-7">
+          <Reveal>
+            <StationDiagram />
+          </Reveal>
+        </div>
+
+        <div className="lg:col-span-5">
+          <Reveal delay={80}>
+            <SectionLabel index="03">The station</SectionLabel>
+            <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl">
+              A desk
+              <br />
+              for the nose.
+            </h2>
+            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-soft">
+              The base is not a tray. It is a weighted aluminium instrument with six recessed
+              bays, encapsulated magnets and a machined lip that catches light like a camera body.
+              It stays where you put it.
+            </p>
+
+            <ul className="mt-8 divide-y divide-ink/15 border-y border-ink/15">
+              {product.includes.slice(0, 5).map((item) => (
+                <li key={item} className="flex items-start gap-3 py-3.5">
+                  <Check className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-ochre" aria-hidden="true" />
+                  <span className="text-[13.5px] leading-snug text-ink-soft">{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <dl className="mt-6 grid grid-cols-2 gap-4 border-b border-ink/15 pb-6 font-mono text-[10px]">
+              <div>
+                <dt className="uppercase tracking-[0.14em] text-ink/40">Base</dt>
+                <dd className="mt-1 text-ink/75">480 × 360 × 45 mm</dd>
+              </div>
+              <div>
+                <dt className="uppercase tracking-[0.14em] text-ink/40">Weight</dt>
+                <dd className="mt-1 text-ink/75">3.6 kg, weighted</dd>
+              </div>
+              <div>
+                <dt className="uppercase tracking-[0.14em] text-ink/40">Magnets</dt>
+                <dd className="mt-1 text-ink/75">N42, encapsulated</dd>
+              </div>
+              <div>
+                <dt className="uppercase tracking-[0.14em] text-ink/40">Mount</dt>
+                <dd className="mt-1 text-ink/75">Floor or wall</dd>
+              </div>
+            </dl>
+
+            <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink/45">Core system</p>
+                <p className="mt-1 font-display text-4xl leading-none">{formatPrice(core.price)}</p>
+              </div>
+              <Button
+                size="lg"
+                onClick={() => {
+                  addToCart({
+                    id: core.id,
+                    name: core.name,
+                    subtitle: core.subtitle,
+                    price: core.price,
+                    swatch: core.swatch,
+                  });
+                  openCart();
+                }}
+              >
+                Add to cart
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Button>
+            </div>
+
+            <p className="mt-4 font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/40">
+              In stock · ships in 1–2 business days · 60-day trial · 2-year warranty
+            </p>
+          </Reveal>
+        </div>
+      </div>
+    </section>
   );
 }
 
 function Modules() {
-  return (
-    <section id="modules" className="py-24 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium mb-4">The Modules</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Six Modules. <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Infinite Play.</span></h2>
-          <p className="text-lg text-gray-600">Each module targets a different instinct. Swap, rearrange, and recombine for endless novelty.</p>
-        </div>
+  const { addToCart, openCart } = useStore();
+  const expansion = catalog['expansion-pack'];
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {product.modules.map((module, index) => (
-            <ModuleCard key={module.id} module={module} index={index} delay={index * 80} />
+  return (
+    <section id="modules" className="border-b border-ink/15">
+      <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
+        <Reveal>
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <SectionLabel index="04">The modules</SectionLabel>
+              <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
+                Six instincts, six objects.
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <p className="max-w-md text-[15px] leading-relaxed text-ink-soft">
+                Each module targets a different part of the problem: tracking, foraging,
+                manipulation, nose work, reach and sequence. Every bay accepts every module.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 sm:grid-cols-2 lg:grid-cols-3">
+          {product.modules.map((module) => (
+            <article
+              key={module.id}
+              className="group relative flex flex-col bg-bone-50 p-6 transition-colors duration-500 hover:bg-bone-100 sm:p-7"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">
+                    {module.number} / {module.code.split('/')[1]?.trim()}
+                  </p>
+                  <h3 className="mt-3 font-display text-[26px] leading-none">{module.name}</h3>
+                </div>
+                <span
+                  className="mt-1 h-3 w-3 rounded-full"
+                  style={{ backgroundColor: module.color }}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div className="mt-5 aspect-[4/3] w-full rounded-sm border border-ink/10 bg-bone-100/60 p-4 transition-colors group-hover:bg-bone-50">
+                <ModuleGlyph id={module.id} accent={module.color} />
+              </div>
+
+              <p className="mt-5 flex-1 text-[13.5px] leading-relaxed text-ink-soft">
+                {module.description}
+              </p>
+
+              <div className="mt-5 flex items-center justify-between border-t border-ink/15 pt-3">
+                <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
+                  {module.instinct}
+                </span>
+                <Difficulty value={module.difficulty} color={module.color} />
+              </div>
+              <div className="mt-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.12em] text-ink/40">
+                <span>{module.time}</span>
+                <span>Included in core</span>
+              </div>
+            </article>
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <Button variant="outline" size="lg" className="border-2 border-gray-300 hover:border-amber-500 hover:bg-amber-50 hover:text-amber-700" onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })}>
-            Add Expansion Pack (+6 Modules) — $199
-          </Button>
+        <Reveal>
+          <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-ink/15 pt-6 sm:flex-row sm:items-center">
+            <p className="max-w-lg text-[13.5px] leading-relaxed text-ink-soft">
+              Already have a station? The Expansion Pack adds a second set of all six modules for
+              two-station households or a faster rotation.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                addToCart({
+                  id: expansion.id,
+                  name: expansion.name,
+                  subtitle: expansion.subtitle,
+                  price: expansion.price,
+                  swatch: expansion.swatch,
+                });
+                openCart();
+              }}
+            >
+              Add expansion — {formatPrice(expansion.price)}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Scents() {
+  const { addToCart, openCart } = useStore();
+  const cartridges = catalog['scent-cartridges-4'];
+
+  return (
+    <section id="scents" className="border-b border-ink/15 bg-bone-100">
+      <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
+        <Reveal>
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <SectionLabel index="05">The scent library</SectionLabel>
+              <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
+                Four notes. One nose.
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <p className="max-w-md text-[15px] leading-relaxed text-ink-soft">
+                Cartridges are the information layer. Swap one and the same maze becomes a
+                different question. Start with one note, add a second once your dog commits.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 sm:grid-cols-2 lg:grid-cols-4">
+          {product.scents.map((scent) => (
+            <article key={scent.code} className="bg-bone-50 p-6 sm:p-7">
+              <div className="flex items-start justify-between">
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">
+                  {scent.code}
+                </span>
+                <span
+                  className="h-8 w-8 rounded-full border border-ink/10"
+                  style={{ backgroundColor: scent.color }}
+                  aria-hidden="true"
+                />
+              </div>
+              <h3 className="mt-6 font-display text-2xl leading-tight">{scent.name}</h3>
+              <p className="mt-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/45">
+                {scent.notes}
+              </p>
+              <div className="mt-5 flex items-center gap-1" aria-label={`Intensity ${scent.intensity} of 5`}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-[3px] flex-1 ${i < scent.intensity ? 'bg-ink' : 'bg-ink/10'}`}
+                  />
+                ))}
+              </div>
+              <p className="mt-4 text-[13px] leading-relaxed text-ink-soft">{scent.use}</p>
+            </article>
+          ))}
+        </div>
+
+        <Reveal>
+          <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-ink/15 pt-6 sm:flex-row sm:items-center">
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-ink/45">
+              Extra cartridges · four pack · {formatPrice(cartridges.price)}
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                addToCart({
+                  id: cartridges.id,
+                  name: cartridges.name,
+                  subtitle: cartridges.subtitle,
+                  price: cartridges.price,
+                  swatch: cartridges.swatch,
+                });
+                openCart();
+              }}
+            >
+              Add four cartridges
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Build() {
+  return (
+    <section id="build" className="border-b border-ink/15">
+      <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
+        <Reveal>
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <SectionLabel index="06">Build a deck</SectionLabel>
+              <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
+                Build it to the dog.
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <p className="max-w-md text-[15px] leading-relaxed text-ink-soft">
+                A confident three-module start or the complete library. Every configuration ships
+                with the same base, so you can grow the deck later without replacing anything.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <div className="mt-10">
+            <KitConfigurator />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Comparison() {
+  return (
+    <section className="border-b border-ink/15 bg-bone-100">
+      <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
+        <Reveal>
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <SectionLabel index="07">Category</SectionLabel>
+              <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
+                Against the usual objects.
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <p className="max-w-md text-[15px] leading-relaxed text-ink-soft">
+                Snuffle mats, treat balls and fixed boards all do one job well. The station is for
+                the dog who has already learned the one job.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <div className="mt-10 overflow-x-auto">
+            <table className="w-full min-w-[720px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-ink/25">
+                  <th scope="col" className="py-3 pr-6 font-mono text-[9px] font-normal uppercase tracking-[0.16em] text-ink/45">
+                    Feature
+                  </th>
+                  <th scope="col" className="bg-bone-50 px-4 py-3 font-mono text-[9px] font-normal uppercase tracking-[0.16em] text-ink">
+                    Sniff &amp; Solve
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-mono text-[9px] font-normal uppercase tracking-[0.16em] text-ink/45">
+                    Snuffle mat
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-mono text-[9px] font-normal uppercase tracking-[0.16em] text-ink/45">
+                    Treat ball
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-mono text-[9px] font-normal uppercase tracking-[0.16em] text-ink/45">
+                    Fixed puzzle
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {product.comparison.map((row) => (
+                  <tr key={row.feature} className="border-b border-ink/10">
+                    <th scope="row" className="py-4 pr-6 text-[13px] font-normal text-ink/70">
+                      {row.feature}
+                    </th>
+                    <td className="bg-bone-50 px-4 py-4 text-[13px] font-medium text-ink">
+                      {row.station}
+                    </td>
+                    <td className="px-4 py-4 text-[13px] text-ink/50">{row.snuffle}</td>
+                    <td className="px-4 py-4 text-[13px] text-ink/50">{row.ball}</td>
+                    <td className="px-4 py-4 text-[13px] text-ink/50">{row.puzzle}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Notes() {
+  return (
+    <section id="notes" className="border-b border-ink/15">
+      <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
+        <Reveal>
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <SectionLabel index="08">Field notes</SectionLabel>
+              <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl lg:text-[56px]">
+                From the first 214 households.
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <div className="flex items-end gap-5">
+                <p className="font-display text-6xl leading-none">4.7</p>
+                <div className="pb-1">
+                  <div className="flex gap-0.5" aria-label="4.7 out of 5 stars">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-3.5 w-3.5 ${i < 4 ? 'fill-ochre text-ochre' : 'fill-ink/15 text-ink/15'}`}
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
+                    214 beta households · 31 written notes
+                  </p>
+                </div>
+              </div>
+              <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-ink-soft">
+                Beta households paid cost price for the station. Notes are unedited, including the
+                critical ones.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 lg:grid-cols-2">
+          {product.reviews.map((review) => (
+            <article key={review.id} className="flex flex-col bg-bone-50 p-6 sm:p-8">
+              <div className="flex items-center justify-between">
+                <div className="flex gap-0.5" aria-label={`${review.rating} out of 5 stars`}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-3 w-3 ${i < review.rating ? 'fill-ink text-ink' : 'fill-ink/12 text-ink/12'}`}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-ink/35">
+                  {review.household}
+                </span>
+              </div>
+
+              <h3 className="mt-5 font-display text-[22px] leading-tight">{review.title}</h3>
+              <p className="mt-3 flex-1 text-[14px] leading-relaxed text-ink-soft">
+                “{review.text}”
+              </p>
+
+              <footer className="mt-6 flex items-end justify-between border-t border-ink/15 pt-4">
+                <div>
+                  <p className="text-[13px] font-medium">{review.name}</p>
+                  <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-ink/40">
+                    {review.dog} · {review.city}
+                  </p>
+                </div>
+                <p className="font-mono text-[8px] uppercase tracking-[0.12em] text-ink/35">{review.date}</p>
+              </footer>
+            </article>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function ModuleCard({ module, index, delay }: { module: typeof product.modules[0]; index: number; delay: number }) {
-  const colors = [
-    'from-amber-500 to-orange-500',
-    'from-yellow-500 to-amber-500',
-    'from-blue-500 to-cyan-500',
-    'from-purple-500 to-pink-500',
-    'from-emerald-500 to-teal-500',
-    'from-rose-500 to-pink-500',
-  ];
-
+function Guarantee() {
   return (
-    <div
-      className="group relative p-7 rounded-2xl bg-white border border-gray-100 hover:border-transparent hover:shadow-2xl transition-all duration-500 overflow-hidden"
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: colors[index] }} aria-hidden="true" />
-      <div className="relative z-10">
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500" style={{ background: colors[index] }}>
-          <span className="text-3xl" aria-hidden="true">{module.icon}</span>
-        </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-white transition-colors">{module.name}</h3>
-        <p className="text-gray-600 mb-5 leading-relaxed group-hover:text-gray-300 transition-colors">{module.description}</p>
-        <div className="space-y-3 text-sm">
-          <ModuleMeta icon={Brain} label="Instinct" value={module.instict} />
-          <ModuleMeta icon={Zap} label="Difficulty" value={module.difficulty} />
-          <ModuleMeta icon={Clock} label="Engagement" value={module.time} />
-        </div>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: colors[index] }} aria-hidden="true" />
-    </div>
-  );
-}
-
-function ModuleMeta({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string; ariaHidden?: boolean }>; label: string; value: string }) {
-  return (
-    <div className="flex items-center gap-2 text-gray-500 group-hover:text-gray-300 transition-colors">
-      <Icon className="h-4 w-4" aria-hidden="true" />
-      <span className="font-medium text-gray-900 group-hover:text-white transition-colors">{label}:</span>
-      <span>{value}</span>
-    </div>
-  );
-}
-
-function Reviews() {
-  return (
-    <section id="reviews" className="py-24 bg-white relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-50/30 to-transparent" aria-hidden="true" />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium mb-4">Testimonials</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Trusted by <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Dog Parents & Professionals</span></h2>
-          <p className="text-lg text-gray-600">Real results from our 200-dog pilot program and early customers.</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {product.reviews.map((review, index) => (
-            <ReviewCard key={review.id} review={review} delay={index * 80} />
-          ))}
-        </div>
+    <section className="border-b border-ink/15 bg-bone-100">
+      <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-24">
+        <Reveal>
+          <div className="grid gap-10 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <SectionLabel index="09">The promise</SectionLabel>
+              <h2 className="mt-6 font-display text-4xl leading-[0.98] tracking-[-0.02em] sm:text-5xl">
+                A trial that
+                <br />
+                actually ends.
+              </h2>
+              <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-ink-soft">
+                Enrichment is personal. If the station does not fit your dog, we take it back and
+                pay the return shipping. No forms, no restocking fee.
+              </p>
+            </div>
+            <div className="grid gap-px border border-ink/15 bg-ink/15 sm:grid-cols-3 lg:col-span-8">
+              {product.guarantee.map((item, index) => (
+                <div key={item.title} className="bg-bone-50 p-6">
+                  <p className="font-display text-5xl leading-none text-ink/15">
+                    {['60', '02', '∞'][index]}
+                  </p>
+                  <h3 className="mt-6 font-display text-xl leading-tight">{item.title}</h3>
+                  <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
-  );
-}
-
-function ReviewCard({ review, delay }: { review: typeof product.reviews[0]; delay: number }) {
-  return (
-    <div
-      className="relative p-7 rounded-2xl bg-gray-50 border border-gray-100 hover:border-amber-200 hover:shadow-xl transition-all duration-500"
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
-      <div className="flex gap-1 mb-4" aria-label={`${review.rating} out of 5 stars`}>
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            className={`h-5 w-5 ${i < review.rating ? 'text-amber-400 fill-current' : 'text-gray-300'}`}
-            fill={i < review.rating ? 'currentColor' : 'none'}
-          />
-        ))}
-      </div>
-      <p className="text-gray-700 mb-5 italic leading-relaxed">"{review.text}"</p>
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-200 to-amber-300 flex items-center justify-center text-amber-800 font-bold text-lg">
-          {review.name.charAt(0)}
-        </div>
-        <div>
-          <div className="font-medium text-gray-900">{review.name}</div>
-          <div className="text-sm text-gray-500">{review.dog}</div>
-        </div>
-      </div>
-      {review.verified && (
-        <div className="mt-3 flex items-center gap-1 text-xs text-emerald-600">
-          <CheckCircle className="h-3 w-3" aria-hidden="true" />
-          Verified Purchase
-        </div>
-      )}
-    </div>
   );
 }
 
 function FAQ() {
   return (
-    <section id="faq" className="py-24 bg-gray-50">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium mb-4">FAQ</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Frequently Asked Questions</h2>
-          <p className="text-lg text-gray-600">Everything you need to know before you buy.</p>
+    <section id="faq" className="border-b border-ink/15">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-28">
+        <div className="lg:col-span-4">
+          <div className="lg:sticky lg:top-32">
+            <SectionLabel index="10">Questions</SectionLabel>
+            <h2 className="mt-6 font-display text-[40px] leading-[0.98] tracking-[-0.02em] sm:text-5xl">
+              The honest
+              <br />
+              answers.
+            </h2>
+            <p className="mt-5 max-w-xs text-[14px] leading-relaxed text-ink-soft">
+              If something is missing, write to us. A person who has set up the station will
+              answer.
+            </p>
+            <a
+              href="mailto:hello@sniffsolve.example"
+              className="mt-6 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] underline decoration-ochre decoration-2 underline-offset-4"
+            >
+              hello@sniffsolve.example
+              <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+            </a>
+          </div>
         </div>
-
-        <div className="space-y-4">
-          {product.faq.map((item, index) => (
-            <FAQItem key={index} question={item.q} answer={item.a} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TrustBar() {
-  return (
-    <section className="py-12 bg-white border-t border-gray-100 border-b border-gray-100">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {trustBadges.map((badge, index) => (
-            <div key={index} className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
-                <badge.icon className="h-6 w-6 text-amber-600" aria-hidden="true" />
-              </div>
-              <div>
-                <div className="font-semibold text-gray-900">{badge.text}</div>
-                <div className="text-sm text-gray-500">{badge.desc}</div>
-              </div>
-            </div>
-          ))}
+        <div className="lg:col-span-8">
+          <div className="border-t border-ink/15">
+            {product.faq.map((item, index) => (
+              <FAQItem key={item.q} question={item.q} answer={item.a} index={index} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -524,50 +765,92 @@ function TrustBar() {
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-400 py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl font-bold text-white">Sniff & Solve</span>
-              <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded">Modular Scent Puzzle System</span>
-            </div>
-            <p className="text-gray-400 max-w-sm leading-relaxed mb-6">
-              The modular scent puzzle system that keeps dogs happily busy for hours.
-              Designed with veterinary behaviorists. Built for real life.
+    <footer className="bg-bone-100">
+      <div className="mx-auto max-w-[1400px] px-5 py-16 sm:px-8">
+        <div className="grid gap-10 border-b border-ink/15 pb-12 sm:grid-cols-2 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <p className="font-display text-[26px] leading-none">Sniff &amp; Solve</p>
+            <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.24em] text-ink/45">
+              Olfactory instruments for dogs
             </p>
-            <div className="flex items-center gap-6">
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 hover:text-white transition-colors" aria-label="Instagram">📷</a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 hover:text-white transition-colors" aria-label="TikTok">🎵</a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 hover:text-white transition-colors" aria-label="YouTube">▶️</a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 hover:text-white transition-colors" aria-label="Email">✉️</a>
-            </div>
+            <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-ink-soft">
+              A modular scent-puzzle station designed to be rearranged, not completed. Made for
+              dogs who read the world with their nose.
+            </p>
+            <p className="mt-5 max-w-sm border-l border-ochre/60 pl-3 font-mono text-[8px] uppercase leading-relaxed tracking-[0.1em] text-ink/35">
+              Concept store. The product, brand and field notes are fictional — built as a
+              design-and-commerce demo. No payment is taken.
+            </p>
           </div>
-          <div>
-            <h4 className="font-medium text-white mb-4">Product</h4>
-            <ul className="space-y-3 text-sm">
-              <li><a href="#product" className="hover:text-white transition-colors flex items-center gap-2"><PawPrint className="h-4 w-4" aria-hidden="true" />Core System</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors flex items-center gap-2"><Sparkles className="h-4 w-4" aria-hidden="true" />Modules</a></li>
-              <li><a href="#faq" className="hover:text-white transition-colors flex items-center gap-2"><ShieldCheck className="h-4 w-4" aria-hidden="true" />FAQ</a></li>
-              <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Award className="h-4 w-4" aria-hidden="true" />Expansion Pack</a></li>
+
+          <nav className="lg:col-span-2" aria-label="Shop">
+            <h3 className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">Shop</h3>
+            <ul className="mt-4 space-y-2.5 text-[13px]">
+              {[
+                ['The station', '/#station'],
+                ['Modules', '/#modules'],
+                ['Scent library', '/#scents'],
+                ['Build a kit', '/#build'],
+                ['Expansion pack', '/#modules'],
+              ].map(([label, href]) => (
+                <li key={label}>
+                  <Link href={href} className="text-ink/70 transition-colors hover:text-ink">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
-          <div>
-            <h4 className="font-medium text-white mb-4">Support</h4>
-            <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Truck className="h-4 w-4" aria-hidden="true" />Shipping Info</a></li>
-              <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><RotateCcw className="h-4 w-4" aria-hidden="true" />Returns</a></li>
-              <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Shield className="h-4 w-4" aria-hidden="true" />Warranty</a></li>
-              <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Users className="h-4 w-4" aria-hidden="true" />Contact Us</a></li>
+          </nav>
+
+          <nav className="lg:col-span-2" aria-label="Support">
+            <h3 className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">Support</h3>
+            <ul className="mt-4 space-y-2.5 text-[13px]">
+              {[
+                ['Shipping', '/#faq'],
+                ['Returns & trial', '/#faq'],
+                ['Warranty', '/#faq'],
+                ['Care guide', '/#faq'],
+                ['Field notes', '/#notes'],
+              ].map(([label, href]) => (
+                <li key={label}>
+                  <Link href={href} className="text-ink/70 transition-colors hover:text-ink">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="lg:col-span-3">
+            <h3 className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">Contact</h3>
+            <ul className="mt-4 space-y-2.5 text-[13px]">
+              <li>
+                <a href="mailto:hello@sniffsolve.example" className="text-ink/70 hover:text-ink">
+                  hello@sniffsolve.example
+                </a>
+              </li>
+              <li className="text-ink/50">Mon–Fri, 09:00–17:00 CET</li>
+              <li>
+                <Link href="/#faq" className="text-ink/70 hover:text-ink">
+                  Order &amp; delivery questions
+                </Link>
+              </li>
+              <li>
+                <code className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
+                  GET /api/orders
+                </code>
+              </li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">© 2024 Sniff & Solve. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-white transition-colors">Accessibility</a>
+
+        <div className="flex flex-col gap-3 pt-6 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/35 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 Sniff &amp; Solve. All rights reserved.</p>
+          <p>Demo build · no real payments · no real shipping</p>
+          <div className="flex gap-5">
+            <Link href="/#faq" className="hover:text-ink">Privacy</Link>
+            <Link href="/#faq" className="hover:text-ink">Terms</Link>
+            <Link href="/#faq" className="hover:text-ink">Accessibility</Link>
           </div>
         </div>
       </div>
@@ -577,36 +860,19 @@ function Footer() {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <style jsx global>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.05); }
-        }
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-blob { animation: blob 7s infinite; }
-        .animate-blob.animation-delay-2000 { animation-delay: 2s; }
-        .animate-pulse-slow { animation: pulse-slow 4s infinite; }
-        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; opacity: 0; }
-      `}</style>
+    <div className="flex min-h-screen flex-col bg-bone-50">
       <Header />
       <Cart />
       <main className="flex-1">
         <Hero />
-        <Benefits />
-        <Stats />
-        <ProductShowcase />
+        <Science />
+        <StationSection />
         <Modules />
-        <Reviews />
-        <TrustBar />
+        <Scents />
+        <Build />
+        <Comparison />
+        <Notes />
+        <Guarantee />
         <FAQ />
         <CTA />
       </main>
