@@ -69,6 +69,7 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: 'sniff-solve-cart',
+      partialize: (state) => ({ cart: state.cart }),
     }
   )
 );

@@ -1,0 +1,342 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation "Main navigation" [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]:
+            - link "Sniff & Solve Home" [ref=e7] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e8]: Sniff & Solve
+              - generic [ref=e9]: Modular Scent Puzzle System
+            - generic [ref=e10]:
+              - link "Product" [ref=e11] [cursor=pointer]:
+                - /url: "#product"
+              - link "Modules" [ref=e12] [cursor=pointer]:
+                - /url: "#modules"
+              - link "Reviews" [ref=e13] [cursor=pointer]:
+                - /url: "#reviews"
+              - link "FAQ" [ref=e14] [cursor=pointer]:
+                - /url: "#faq"
+          - button "Open cart (0 items)" [ref=e16]
+    - main [ref=e22]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: "New: Modular Scent Puzzle System"
+          - heading [level=1] [ref=e37]:
+            - text: Keep Your Dog
+            - generic [ref=e38]: Happily Busy
+            - text: for Hours
+          - paragraph [ref=e40]: The first truly modular enrichment system. Six magnetic puzzle modules. Infinite configurations. One happy dog — even when you're away.
+          - generic [ref=e41]:
+            - button "Get Sniff & Solve" [ref=e42]
+            - button "Explore Modules" [ref=e46]
+          - generic [ref=e47]:
+            - generic [ref=e48]: Free shipping over $100
+            - generic [ref=e53]: 90-day satisfaction guarantee
+            - generic [ref=e58]: Ships in 1–2 business days
+        - generic [ref=e65]:
+          - generic [ref=e73]:
+            - generic [ref=e74]: Drag
+            - generic [ref=e75]: to rotate
+            - generic [ref=e76]: Scroll
+            - generic [ref=e77]: to zoom
+          - generic [ref=e78]:
+            - generic [ref=e79]: Designed for dogs 15–100+ lbs
+            - generic [ref=e87]: Veterinary behaviorist approved
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]: Why It Works
+          - heading "Six Instincts. One System." [level=2] [ref=e97]
+          - paragraph [ref=e98]: Most toys fail because they only engage one instinct. Ours engages six — and changes every week.
+        - generic [ref=e99]:
+          - generic [ref=e102]:
+            - heading "Mental Enrichment" [level=3] [ref=e113]
+            - paragraph [ref=e114]: Six distinct puzzle types target every canine cognitive domain — tracking, foraging, manipulation, sequencing, nose work, and persistence.
+          - generic [ref=e118]:
+            - heading "Never Gets Old" [level=3] [ref=e124]
+            - paragraph [ref=e125]: "Magnetic modules swap in seconds. Reconfigure weekly for novel challenges that prevent habituation — the #1 reason dogs lose interest in toys."
+          - generic [ref=e129]:
+            - heading "Calmer Departures" [level=3] [ref=e134]
+            - paragraph [ref=e135]: In our 8-week pilot, 94% of dogs showed reduced separation behaviors. Engaged dogs don't destroy — they solve, sniff, and nap.
+          - generic [ref=e139]:
+            - heading "Built for Power Chewers" [level=3] [ref=e145]
+            - paragraph [ref=e146]: FDA-compliant copolyester withstands 200+ lb bite force. 2-year warranty. If they break it, we replace it — no questions.
+      - generic [ref=e152]:
+        - generic [ref=e155]:
+          - generic [ref=e159]: 47 min
+          - generic [ref=e160]: Median session engagement
+        - generic [ref=e163]:
+          - generic [ref=e166]: 94%
+          - generic [ref=e167]: Dogs with reduced anxiety
+        - generic [ref=e170]:
+          - generic [ref=e174]: 720+
+          - generic [ref=e175]: Unique puzzle combinations
+        - generic [ref=e178]:
+          - generic [ref=e182]: 2 yr
+          - generic [ref=e183]: Warranty coverage
+      - generic [ref=e186]:
+        - generic [ref=e195]:
+          - generic [ref=e196]: Drag
+          - generic [ref=e197]: to rotate
+          - generic [ref=e198]: Scroll
+          - generic [ref=e199]: to zoom
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - generic [ref=e202]: The Core System
+            - heading "Sniff & Solve" [level=2] [ref=e203]
+            - paragraph [ref=e204]: The Modular Scent Puzzle System
+            - paragraph [ref=e205]: "Meet the first truly modular enrichment system designed to keep your dog happily busy for hours while you're away. Sniff & Solve combines scent work, problem-solving, and physical manipulation in a reconfigurable station that never gets old. Each of the six magnetic modules targets a different canine instinct: tracking, foraging, digging, nose work, paw manipulation, and sequential reasoning. Swap modules in seconds, rearrange the layout weekly, and watch your dog discover new challenges every time."
+            - generic [ref=e206]:
+              - generic [ref=e207]: 1× Sniff & Solve Base Station (wall/floor mount)
+              - generic [ref=e213]: 6× Puzzle Modules (one of each type)
+              - generic [ref=e219]: 4× Scent Cartridges (peanut butter, bacon, cheese, liver)
+              - generic [ref=e225]: 1× Snuffle Spiral (installed)
+              - generic [ref=e231]: Wall-mount hardware kit + floor-standing feet
+              - generic [ref=e237]: Quick-start guide + behaviorist tips booklet
+              - generic [ref=e243]: Free companion app (iOS/Android)
+            - generic [ref=e249]:
+              - button "Add to Cart — $249" [ref=e250]
+              - button "View All Modules" [ref=e254]
+          - generic [ref=e255]:
+            - generic [ref=e256]:
+              - generic [ref=e257]: Most Popular
+              - generic [ref=e258]: $249
+              - generic [ref=e259]: Core System
+            - generic [ref=e260]:
+              - generic [ref=e261]: $199
+              - generic [ref=e262]: Expansion Pack (6 modules)
+            - generic [ref=e263]:
+              - generic [ref=e264]: $12
+              - generic [ref=e265]: Snuffle Spiral Refill
+      - generic [ref=e267]:
+        - generic [ref=e268]:
+          - generic [ref=e269]: The Modules
+          - heading "Six Modules. Infinite Play." [level=2] [ref=e270]
+          - paragraph [ref=e271]: Each module targets a different instinct. Swap, rearrange, and recombine for endless novelty.
+        - generic [ref=e272]:
+          - generic [ref=e275]:
+            - generic [aria-hidden] [ref=e277]: 👃
+            - heading "Scent Maze" [level=3] [ref=e278]
+            - paragraph [ref=e279]: Sliding panels reveal interchangeable scent trails. Swap the 4 included scent cartridges (peanut butter, bacon, cheese, liver) or add your own. Dogs track, nudge, and follow the trail to the hidden treat well.
+            - generic [ref=e280]:
+              - generic [ref=e281]:
+                - generic [ref=e290]: "Instinct:"
+                - generic [ref=e291]: Tracking & Scent Discrimination
+              - generic [ref=e292]:
+                - generic [ref=e295]: "Difficulty:"
+                - generic [ref=e296]: Beginner → Advanced
+              - generic [ref=e297]:
+                - generic [ref=e301]: "Engagement:"
+                - generic [ref=e302]: 15–30 min
+          - generic [ref=e306]:
+            - generic [aria-hidden] [ref=e308]: 🎾
+            - heading "Treat Tumble" [level=3] [ref=e309]
+            - paragraph [ref=e310]: Three weighted wobble balls dispense kibble at different rates. Adjustable internal baffles let you tune difficulty. Dogs learn to nudge, roll, and strategize — each ball behaves differently.
+            - generic [ref=e311]:
+              - generic [ref=e312]:
+                - generic [ref=e321]: "Instinct:"
+                - generic [ref=e322]: Foraging & Problem Solving
+              - generic [ref=e323]:
+                - generic [ref=e326]: "Difficulty:"
+                - generic [ref=e327]: Beginner → Intermediate
+              - generic [ref=e328]:
+                - generic [ref=e332]: "Engagement:"
+                - generic [ref=e333]: 10–25 min
+          - generic [ref=e337]:
+            - generic [aria-hidden] [ref=e339]: 🚪
+            - heading "Flip & Find" [level=3] [ref=e340]
+            - paragraph [ref=e341]: "Six hinged doors, each with a unique opening mechanism: lift, slide, rotate, press, nudge, and paw-latch. Randomize treat placement behind doors for a new puzzle every session."
+            - generic [ref=e342]:
+              - generic [ref=e343]:
+                - generic [ref=e352]: "Instinct:"
+                - generic [ref=e353]: Manipulation & Sequential Reasoning
+              - generic [ref=e354]:
+                - generic [ref=e357]: "Difficulty:"
+                - generic [ref=e358]: Intermediate → Advanced
+              - generic [ref=e359]:
+                - generic [ref=e363]: "Engagement:"
+                - generic [ref=e364]: 20–40 min
+          - generic [ref=e368]:
+            - generic [aria-hidden] [ref=e370]: 🌀
+            - heading "Snuffle Spiral" [level=3] [ref=e371]
+            - paragraph [ref=e372]: Replaceable fabric spiral with 30+ hidden pockets. Bury treats deep or shallow. Machine-washable fleece lasts months; replacement spirals cost $12. The ultimate nose-work canvas.
+            - generic [ref=e373]:
+              - generic [ref=e374]:
+                - generic [ref=e383]: "Instinct:"
+                - generic [ref=e384]: Nose Work & Persistence
+              - generic [ref=e385]:
+                - generic [ref=e388]: "Difficulty:"
+                - generic [ref=e389]: Beginner → Expert
+              - generic [ref=e390]:
+                - generic [ref=e394]: "Engagement:"
+                - generic [ref=e395]: 15–45 min
+          - generic [ref=e399]:
+            - generic [aria-hidden] [ref=e401]: 🧪
+            - heading "Scent Tubes" [level=3] [ref=e402]
+            - paragraph [ref=e403]: Five vertical tubes at varied depths (2–8 inches). Drop treats, smear peanut butter, or insert scent swabs. Dogs must reach, lick, and problem-solve at different angles and depths.
+            - generic [ref=e404]:
+              - generic [ref=e405]:
+                - generic [ref=e414]: "Instinct:"
+                - generic [ref=e415]: Vertical Exploration & Dexterity
+              - generic [ref=e416]:
+                - generic [ref=e419]: "Difficulty:"
+                - generic [ref=e420]: Intermediate → Advanced
+              - generic [ref=e421]:
+                - generic [ref=e425]: "Engagement:"
+                - generic [ref=e426]: 10–30 min
+          - generic [ref=e430]:
+            - generic [aria-hidden] [ref=e432]: 🐾
+            - heading "Paw Press" [level=3] [ref=e433]
+            - paragraph [ref=e434]: Four large, illuminated buttons. Press the lit sequence to earn a treat — patterns grow from 2 to 6 steps. Teaches cause-effect, memory, and patience. The only module dogs can "learn" progressively.
+            - generic [ref=e435]:
+              - generic [ref=e436]:
+                - generic [ref=e445]: "Instinct:"
+                - generic [ref=e446]: Cognitive Sequencing & Impulse Control
+              - generic [ref=e447]:
+                - generic [ref=e450]: "Difficulty:"
+                - generic [ref=e451]: Advanced → Expert
+              - generic [ref=e452]:
+                - generic [ref=e456]: "Engagement:"
+                - generic [ref=e457]: 15–35 min
+        - button "Add Expansion Pack (+6 Modules) — $199" [ref=e460]
+      - generic [ref=e463]:
+        - generic [ref=e464]:
+          - generic [ref=e465]: Testimonials
+          - heading "Trusted by Dog Parents & Professionals" [level=2] [ref=e466]
+          - paragraph [ref=e467]: Real results from our 200-dog pilot program and early customers.
+        - generic [ref=e468]:
+          - generic [ref=e469]:
+            - generic "5 out of 5 stars" [ref=e471]
+            - paragraph [ref=e482]: "\"My BC would destroy the house when I left. First day with Sniff & Solve: 52 minutes of focused work, then she napped for 3 hours. It's been 6 weeks and she still gets excited when I set it up. The module rotation is genius — she never masters it completely.\""
+            - generic [ref=e483]:
+              - generic [ref=e484]: S
+              - generic [ref=e485]:
+                - generic [ref=e486]: Sarah M.
+                - generic [ref=e487]: Border Collie, 3 yrs
+            - generic [ref=e488]: Verified Purchase
+          - generic [ref=e492]:
+            - generic "5 out of 5 stars" [ref=e494]
+            - paragraph [ref=e505]: "\"Skeptical at $249 but worth every penny. Lab is a power chewer — zero damage after 2 months. He's figured out Flip & Find so we cranked the difficulty. Treat Tumble on level 4 keeps him busy 35+ mins. Customer service replaced a lost scent cartridge free.\""
+            - generic [ref=e506]:
+              - generic [ref=e507]: J
+              - generic [ref=e508]:
+                - generic [ref=e509]: James R.
+                - generic [ref=e510]: Labrador, 5 yrs
+            - generic [ref=e511]: Verified Purchase
+          - generic [ref=e515]:
+            - generic "5 out of 5 stars" [ref=e517]
+            - paragraph [ref=e528]: "\"As a veterinary behaviorist, I recommend this to separation-anxiety clients. It hits all the right enrichment categories: olfactory, cognitive, physical. The modularity prevents habituation — the #1 failure mode of enrichment toys. Clinically sound design.\""
+            - generic [ref=e529]:
+              - generic [ref=e530]: D
+              - generic [ref=e531]:
+                - generic [ref=e532]: Dr. Patricia V., DVM
+                - generic [ref=e533]: Mixed breed, 4 yrs
+            - generic [ref=e534]: Verified Purchase
+          - generic [ref=e538]:
+            - generic "4 out of 5 stars" [ref=e540]
+            - paragraph [ref=e551]: "\"Frenchie loves the Snuffle Spiral and Scent Tubes. Paw Press is too advanced for her (brachycephalic, hard to press buttons firmly). Would love a \"lite\" version of that module. Otherwise fantastic — she's calm when I leave now.\""
+            - generic [ref=e552]:
+              - generic [ref=e553]: A
+              - generic [ref=e554]:
+                - generic [ref=e555]: Amanda K.
+                - generic [ref=e556]: French Bulldog, 2 yrs
+            - generic [ref=e557]: Verified Purchase
+      - generic [ref=e563]:
+        - generic [ref=e569]:
+          - generic [ref=e570]: Vet Recommended
+          - generic [ref=e571]: Designed with behaviorists
+        - generic [ref=e577]:
+          - generic [ref=e578]: Safety Certified
+          - generic [ref=e579]: ASTM F963 & FDA compliant
+        - generic [ref=e587]:
+          - generic [ref=e588]: 10,000+ Dogs
+          - generic [ref=e589]: Happy customers worldwide
+        - generic [ref=e595]:
+          - generic [ref=e596]: Eco-Conscious
+          - generic [ref=e597]: Recyclable materials
+      - generic [ref=e599]:
+        - generic [ref=e600]:
+          - generic [ref=e601]: FAQ
+          - heading "Frequently Asked Questions" [level=2] [ref=e602]
+          - paragraph [ref=e603]: Everything you need to know before you buy.
+        - generic [ref=e604]:
+          - group [ref=e605]:
+            - heading "My dog destroys toys. Will this survive?" [level=3] [ref=e607] [cursor=pointer]
+          - group [ref=e610]:
+            - heading "How long does it really keep them busy?" [level=3] [ref=e612] [cursor=pointer]
+          - group [ref=e615]:
+            - heading "Is the app required?" [level=3] [ref=e617] [cursor=pointer]
+          - group [ref=e620]:
+            - heading "Can I buy modules separately?" [level=3] [ref=e622] [cursor=pointer]
+          - group [ref=e625]:
+            - heading "What if my dog figures it out too fast?" [level=3] [ref=e627] [cursor=pointer]
+          - group [ref=e630]:
+            - heading "Is it safe for unsupervised use?" [level=3] [ref=e632] [cursor=pointer]
+      - generic [ref=e636]:
+        - heading "Ready for a Calmer, Happier Dog?" [level=2] [ref=e637]
+        - paragraph [ref=e638]: Join 10,000+ dog parents who've transformed alone time into enrichment time.
+        - generic [ref=e639]:
+          - button "Get Sniff & Solve — $249" [ref=e640]
+          - button "Explore Modules First" [ref=e641]
+        - paragraph [ref=e642]: 90-day satisfaction guarantee • Free shipping over $100 • Ships in 1–2 business days
+    - contentinfo [ref=e643]:
+      - generic [ref=e644]:
+        - generic [ref=e645]:
+          - generic [ref=e646]:
+            - generic [ref=e647]:
+              - generic [ref=e648]: Sniff & Solve
+              - generic [ref=e649]: Modular Scent Puzzle System
+            - paragraph [ref=e650]: The modular scent puzzle system that keeps dogs happily busy for hours. Designed with veterinary behaviorists. Built for real life.
+            - generic [ref=e651]:
+              - link "Instagram" [ref=e652] [cursor=pointer]:
+                - /url: "#"
+                - text: 📷
+              - link "TikTok" [ref=e653] [cursor=pointer]:
+                - /url: "#"
+                - text: 🎵
+              - link "YouTube" [ref=e654] [cursor=pointer]:
+                - /url: "#"
+                - text: ▶️
+              - link "Email" [ref=e655] [cursor=pointer]:
+                - /url: "#"
+                - text: ✉️
+          - generic [ref=e656]:
+            - heading "Product" [level=4] [ref=e657]
+            - list [ref=e658]:
+              - listitem [ref=e659]:
+                - link "Core System" [ref=e660] [cursor=pointer]:
+                  - /url: "#product"
+              - listitem [ref=e666]:
+                - link "Modules" [ref=e667] [cursor=pointer]:
+                  - /url: "#modules"
+              - listitem [ref=e671]:
+                - link "FAQ" [ref=e672] [cursor=pointer]:
+                  - /url: "#faq"
+              - listitem [ref=e676]:
+                - link "Expansion Pack" [ref=e677] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e681]:
+            - heading "Support" [level=4] [ref=e682]
+            - list [ref=e683]:
+              - listitem [ref=e684]:
+                - link "Shipping Info" [ref=e685] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e691]:
+                - link "Returns" [ref=e692] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e696]:
+                - link "Warranty" [ref=e697] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e700]:
+                - link "Contact Us" [ref=e701] [cursor=pointer]:
+                  - /url: "#"
+        - generic [ref=e707]:
+          - paragraph [ref=e708]: © 2024 Sniff & Solve. All rights reserved.
+          - generic [ref=e709]:
+            - link "Privacy Policy" [ref=e710] [cursor=pointer]:
+              - /url: "#"
+            - link "Terms of Service" [ref=e711] [cursor=pointer]:
+              - /url: "#"
+            - link "Accessibility" [ref=e712] [cursor=pointer]:
+              - /url: "#"
+  - alert [ref=e713]
