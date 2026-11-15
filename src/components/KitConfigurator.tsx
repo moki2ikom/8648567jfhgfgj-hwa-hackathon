@@ -45,7 +45,7 @@ const KITS: Array<{
 ];
 
 const FINISHES: Array<{ key: FinishKey; label: string; swatch: string; note: string }> = [
-  { key: 'graphite', label: 'Graphite', swatch: '#242427', note: 'Anodized dark aluminum' },
+  { key: 'graphite', label: 'Graphite', swatch: '#242427', note: 'Powder-coated graphite' },
   { key: 'bone', label: 'Bone', swatch: '#D8CDB7', note: 'Powder-coated warm bone' },
 ];
 

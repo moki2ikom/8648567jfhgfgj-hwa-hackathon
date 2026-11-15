@@ -6,7 +6,7 @@ export const product = {
   description:
     'A machined base station holds six magnetic puzzle modules, each built around a different canine instinct. Rearrange the deck, change the scent, adjust the difficulty, and the puzzle your dog solved last week is gone.',
   longDescription:
-    'Most enrichment toys are finished in ten minutes and abandoned in ten days. Sniff & Solve is built around rotation instead of novelty: six modules that can be moved, inverted and recombined, four interchangeable scent cartridges, and difficulty settings that scale from a first-sniff puppy to a working scent dog. The base is powder-coated aluminum with a machined lip and non-slip feet. Modules are food-contact copolyester, dishwasher safe, and rated for dogs who destroy everything else.',
+    'Most enrichment toys are finished in ten minutes and abandoned in ten days. Sniff & Solve is built around rotation instead of novelty: six modules that can be moved, inverted and recombined, four interchangeable scent cartridges, and difficulty settings that scale from a first-sniff puppy to a working scent dog. The base is powder-coated aluminum with a machined lip and non-slip feet. Modules are food-contact copolyester, dishwasher safe, and built for enthusiastic chewers.',
 
   price: 249,
   currency: 'USD',
