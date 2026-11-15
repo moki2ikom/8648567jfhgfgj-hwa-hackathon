@@ -56,12 +56,10 @@ function BaseStation() {
         // @ts-expect-error - args type inference issue with drei
         args={[24, 2.5, 18, 0.5, 4]}
         position={[0, 1.25, 0] as const}
-        color="#1E1E1E"
-        roughness={0.3}
-        metalness={0.25}
         castShadow
         receiveShadow
       >
+        <meshStandardMaterial color="#1E1E1E" roughness={0.35} metalness={0.3} />
         <Html
           center
           position={[0, -1.5, 9.5]}
@@ -83,11 +81,10 @@ function BaseStation() {
         // @ts-expect-error - args type inference issue with drei
         args={[24, 0.4, 18, 0.2, 4]}
         position={[0, 0.2, 0] as const}
-        color="#0F0F0F"
-        roughness={0.5}
-        metalness={0.15}
         receiveShadow
-      />
+      >
+        <meshStandardMaterial color="#0F0F0F" roughness={0.5} metalness={0.2} />
+      </RoundedBox>
 
       {moduleOrder.map((moduleId, index) => {
         const x = (index - 2.5) * 3.8;
@@ -149,9 +146,6 @@ function ModuleSlot({
         ref={meshRef}
         // @ts-expect-error - args type inference issue with drei
         args={[3.2, 2.8, 3.2, 0.3, 4]}
-        color={color}
-        roughness={0.4}
-        metalness={0.08}
         castShadow
         receiveShadow
         scale={isHovered ? 1.12 : 1}
@@ -161,6 +155,7 @@ function ModuleSlot({
         onPointerLeave={() => setIsPressed(false)}
         style={{ transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), scale 0.2s ease' }}
       >
+        <meshStandardMaterial color={color} roughness={0.4} metalness={0.1} />
         <Html
           center
           position={[0, -2.2, 0] as const}
