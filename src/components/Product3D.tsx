@@ -301,31 +301,6 @@ function Scene() {
   );
 }
 
-export function Product3D() {
-  return (
-    <div className="relative w-full h-full min-h-[550px] max-w-4xl mx-auto">
-      <Canvas
-        camera={{ position: [0, 5.5, 26], fov: 32 }}
-        style={{ outline: 'none' }}
-        gl={{ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' }}
-        onCreated={({ gl }) => {
-          gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        }}
-      >
-        <Suspense fallback={<LoadingFallback />}>
-          <Scene />
-        </Suspense>
-      </Canvas>
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-xs text-gray-500 font-medium flex items-center justify-center gap-1">
-        <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 font-mono text-[10px]">Drag</kbd>
-        <span>to rotate</span>
-        <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 font-mono text-[10px]">Scroll</kbd>
-        <span>to zoom</span>
-      </div>
-    </div>
-  );
-}
-
 function LoadingFallback() {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-50 to-white rounded-2xl">
@@ -333,6 +308,31 @@ function LoadingFallback() {
         <div className="w-14 h-14 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
         <p className="text-gray-600 font-medium text-lg">Loading 3D experience...</p>
         <p className="text-gray-400 text-sm mt-1">Initializing modules</p>
+      </div>
+    </div>
+  );
+}
+
+export function Product3D() {
+  return (
+    <div className="relative w-full h-full min-h-[550px] max-w-4xl mx-auto">
+      <Suspense fallback={<LoadingFallback />}>
+        <Canvas
+          camera={{ position: [0, 5.5, 26], fov: 32 }}
+          style={{ outline: 'none' }}
+          gl={{ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' }}
+          onCreated={({ gl }) => {
+            gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          }}
+        >
+          <Scene />
+        </Canvas>
+      </Suspense>
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-xs text-gray-500 font-medium flex items-center justify-center gap-1">
+        <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 font-mono text-[10px]">Drag</kbd>
+        <span>to rotate</span>
+        <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 font-mono text-[10px]">Scroll</kbd>
+        <span>to zoom</span>
       </div>
     </div>
   );
