@@ -1,0 +1,29 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ssGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E9D5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D8B4FE;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="20" fill="url(#ssGrad)"/>
+  <g fill="none" stroke="#A855F7" stroke-width="2">
+    <path d="M150 150 
+      A 20 20 0 0 1 170 130
+      A 40 40 0 0 1 150 110
+      A 60 60 0 0 1 210 150
+      A 80 80 0 0 1 150 230
+      A 60 60 0 0 1 90 150
+      A 40 40 0 0 1 150 110
+      A 20 20 0 0 1 170 130"/>
+  </g>
+  <g fill="#C4B5FD" opacity="0.7">
+    <circle cx="160" cy="140" r="6"/>
+    <circle cx="140" cy="120" r="5"/>
+    <circle cx="180" cy="160" r="4"/>
+    <circle cx="130" cy="150" r="5"/>
+    <circle cx="170" cy="110" r="4"/>
+    <circle cx="190" cy="180" r="6"/>
+  </g>
+  <circle cx="250" cy="50" r="20" fill="#E9D5FF"/>
+  <text x="250" y="55" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="bold" fill="#4C1D95">🌀</text>
+</svg>

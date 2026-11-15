@@ -1,0 +1,29 @@
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FEF3C7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FDE68A;stop-opacity:1" />
+    </linearGradient>
+    <filter id="softShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect width="600" height="600" fill="url(#g1bg)"/>
+  <g filter="url(#softShadow)">
+    <rect x="75" y="120" width="450" height="360" rx="20" fill="#1F2937"/>
+    <rect x="75" y="105" width="450" height="15" rx="5" fill="#111827"/>
+    <g>
+      <rect x="105" y="150" width="95" height="95" rx="12" fill="#FED7AA"/>
+      <rect x="215" y="150" width="95" height="95" rx="12" fill="#FEF08A"/>
+      <rect x="325" y="150" width="95" height="95" rx="12" fill="#BFDBFE"/>
+      <rect x="435" y="150" width="95" height="95" rx="12" fill="#E9D5FF"/>
+    </g>
+    <g>
+      <rect x="105" y="270" width="95" height="95" rx="12" fill="#BBF7D0"/>
+      <rect x="215" y="270" width="95" height="95" rx="12" fill="#FECACA"/>
+      <rect x="325" y="270" width="95" height="95" rx="12" fill="#FED7AA"/>
+      <rect x="435" y="270" width="95" height="95" rx="12" fill="#FEF08A"/>
+    </g>
+  </g>
+  <text x="300" y="520" text-anchor="middle" font-family="system-ui" font-size="16" font-weight="600" fill="#78350F">Complete 6-Module System</text>
+</svg>

@@ -1,0 +1,43 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ogBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1F2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#111827;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ogAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FBBF24;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#ogBg)"/>
+  
+  <circle cx="950" cy="-100" r="400" fill="#F59E0B" opacity="0.1"/>
+  <circle cx="1050" cy="730" r="300" fill="#FBBF24" opacity="0.08"/>
+  
+  <text x="100" y="200" font-family="system-ui" font-size="56" font-weight="800" fill="white" letter-spacing="-2px">SNIFF & SOLVE</text>
+  <text x="100" y="260" font-family="system-ui" font-size="20" font-weight="500" fill="#FBBF24" letter-spacing="0.5px">MODULAR SCENT PUZZLE SYSTEM</text>
+  
+  <text x="100" y="350" font-family="system-ui" font-size="32" font-weight="600" fill="white" line-height="1.3">
+    Keep Your Dog Happily Busy for Hours
+  </text>
+  
+  <text x="100" y="430" font-family="system-ui" font-size="18" fill="#9CA3AF" max-width="400">
+    6 magnetic modules • Infinite configurations • 90-day guarantee
+  </text>
+  
+  <g transform="translate(750, 180)">
+    <rect x="0" y="0" width="380" height="380" rx="30" fill="#1F2937" stroke="#374151" stroke-width="2"/>
+    <g>
+      <rect x="30" y="30" width="75" height="75" rx="10" fill="#FED7AA"/>
+      <rect x="125" y="30" width="75" height="75" rx="10" fill="#FEF08A"/>
+      <rect x="220" y="30" width="75" height="75" rx="10" fill="#BFDBFE"/>
+      <rect x="30" y="125" width="75" height="75" rx="10" fill="#E9D5FF"/>
+      <rect x="125" y="125" width="75" height="75" rx="10" fill="#BBF7D0"/>
+      <rect x="220" y="125" width="75" height="75" rx="10" fill="#FECACA"/>
+    </g>
+    <rect x="30" y="220" width="265" height="120" rx="15" fill="#111827"/>
+    <text x="162.5" y="285" text-anchor="middle" font-family="system-ui" font-size="16" font-weight="600" fill="#FBBF24">SNIFF & SOLVE</text>
+  </g>
+  
+  <rect x="100" y="530" width="300" height="4" rx="2" fill="url(#ogAccent)"/>
+</svg>
