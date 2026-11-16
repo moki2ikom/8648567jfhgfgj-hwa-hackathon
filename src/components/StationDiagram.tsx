@@ -14,14 +14,14 @@ const LAYOUT = [
 
 const SIZE = 116;
 
-export function StationDiagram() {
+export function StationDiagram({ onInspect }: { onInspect?: (id: string) => void }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const active = product.modules.find((unit) => unit.id === hovered);
 
   return (
     <figure className="w-full">
       <div className="relative rounded-sm border border-ink/15 bg-bone-100/60 p-3 sm:p-5">
-        <svg viewBox="0 0 520 420" className="w-full" role="img" aria-label="Top-down technical diagram of the Sniff & Solve base station with six module bays">
+        <svg viewBox="0 0 520 420" className="w-full" role="group" aria-label="Top-down technical diagram of the Sniff & Solve base station with six module bays">
           <title>Top-down technical diagram of the base station</title>
 
           <g stroke="#17150f" strokeOpacity="0.25" strokeWidth="0.75" fill="none">
@@ -56,7 +56,18 @@ export function StationDiagram() {
                 key={slot.id}
                 onMouseEnter={() => setHovered(slot.id)}
                 onMouseLeave={() => setHovered(null)}
-                className="cursor-pointer"
+                onFocus={() => setHovered(slot.id)}
+                onBlur={() => setHovered(null)}
+                onClick={() => onInspect?.(slot.id)}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') return;
+                  event.preventDefault();
+                  onInspect?.(slot.id);
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Inspect ${unit.name} in the 3D station`}
+                className="cursor-pointer outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ochre"
               >
                 <rect
                   x={slot.x}
@@ -100,14 +111,14 @@ export function StationDiagram() {
               FIG. 01 — Six-bay deck · N42 magnets · 2.2 kg pull
             </p>
             <p className="hidden text-right font-mono text-[9px] uppercase tracking-[0.16em] text-ink/70 sm:block">
-              {active ? `${active.number} — ${active.instinct}` : 'Hover a bay'}
+              {active ? `${active.number} — ${active.instinct}` : 'Select a bay'}
             </p>
           </div>
         </div>
       </div>
-      <figcaption className="mt-3 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.16em] text-ink/40">
-        <span>Top-down study · not to scale</span>
-        <span>Aluminium / copolyester / fleece</span>
+      <figcaption className="mt-3 flex items-center justify-between gap-4 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/40">
+        <span>Top-down study · select a bay to inspect in 3D</span>
+        <span className="hidden sm:inline">Aluminium / copolyester / fleece</span>
       </figcaption>
     </figure>
   );

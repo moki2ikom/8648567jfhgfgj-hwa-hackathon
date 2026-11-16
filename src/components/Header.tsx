@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useMounted } from '@/lib/use-mounted';
+import { useScrolled } from '@/lib/use-scrolled';
 import { Menu, ShoppingBag, X } from 'lucide-react';
 
 const NAV = [
@@ -21,6 +22,7 @@ export function Header() {
     state.cart.reduce((count, item) => count + item.quantity, 0)
   );
   const mounted = useMounted();
+  const scrolled = useScrolled();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -35,7 +37,13 @@ export function Header() {
   const visibleCount = mounted ? cartCount : 0;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/15 bg-bone-50/92 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 border-b border-ink/15 backdrop-blur-md transition-[background-color,box-shadow] duration-500 ${
+        scrolled
+          ? 'bg-bone-50/97 shadow-[0_12px_34px_rgba(23,21,15,0.09)]'
+          : 'bg-bone-50/92'
+      }`}
+    >
       <div className="border-b border-ink/10 bg-ink text-bone-100">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-1.5 font-mono text-[9px] uppercase tracking-[0.22em] sm:px-8">
           <p>Free shipping over $100</p>

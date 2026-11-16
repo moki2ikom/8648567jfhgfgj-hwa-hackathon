@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Check, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Star, X } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Cart } from '@/components/Cart';
 import dynamic from 'next/dynamic';
@@ -59,11 +59,32 @@ function Difficulty({ value, color }: { value: number; color: string }) {
   );
 }
 
-function Hero() {
+function Hero({
+  selected,
+  onSelect,
+}: {
+  selected: string | null;
+  onSelect: (id: string | null) => void;
+}) {
   const { addToCart, openCart } = useStore();
-  const [selected, setSelected] = useState<string | null>(null);
   const core = catalog['kit-core'];
-  const active = product.modules.find((module) => module.id === selected);
+  const activeIndex = product.modules.findIndex((module) => module.id === selected);
+  const active = activeIndex >= 0 ? product.modules[activeIndex] : null;
+
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onSelect(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected, onSelect]);
+
+  const step = (direction: number) => {
+    const next =
+      (activeIndex + direction + product.modules.length) % product.modules.length;
+    onSelect(product.modules[next].id);
+  };
 
   const addCore = () => {
     addToCart({
@@ -77,7 +98,7 @@ function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden border-b border-ink/15">
+    <section id="hero" className="relative scroll-mt-24 overflow-hidden border-b border-ink/15">
       <div className="mx-auto grid max-w-[1400px] grid-cols-1 lg:grid-cols-12">
         <div className="relative order-2 px-5 py-14 sm:px-8 lg:order-1 lg:col-span-5 lg:border-r lg:border-ink/15 lg:py-20 lg:pr-10">
           <div className="animate-rise">
@@ -138,37 +159,134 @@ function Hero() {
           </div>
 
           <p className="sr-only">
-            Interactive 3D preview of the station. The same six modules are described in the
-            modules section below.
+            Interactive 3D preview of the station. Click a module or use the numbered controls to
+            read its note. The same six modules are described in the modules section below.
           </p>
           <div className="relative h-[420px] w-full sm:h-[520px] lg:h-[660px]">
-            <Product3D selected={selected} onSelect={(id) => setSelected((current) => (current === id ? null : id))} />
-          </div>
+            <Product3D selected={selected} onSelect={onSelect} />
 
-          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-10 sm:inset-x-6">
-            <div className="flex items-end justify-between gap-4 border-t border-ink/20 pt-3">
-              {active ? (
-                <div className="min-w-0">
-                  <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-ochre">
-                    {active.number} — {active.code}
-                  </p>
-                  <p className="mt-1 font-display text-xl leading-none sm:text-2xl">{active.name}</p>
-                  <p className="mt-1.5 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/45">
-                    {active.instinct} · {active.time}
-                  </p>
-                </div>
-              ) : (
-                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink/45">
-                  Click a module to inspect it
-                </p>
-              )}
-              <div className="hidden shrink-0 text-right font-mono text-[8px] uppercase leading-relaxed tracking-[0.12em] text-ink/40 sm:block">
-                Scale 1:2
-                <br />
-                Graphite / brass
+            <div className="absolute inset-x-3 bottom-3 z-20 flex items-center justify-between gap-2 rounded-sm border border-ink/15 bg-bone-50/92 p-1.5 backdrop-blur-md sm:inset-x-4 sm:bottom-4">
+              <div className="flex items-center gap-0.5 sm:gap-1" role="group" aria-label="Inspect a module">
+                {product.modules.map((module) => (
+                  <button
+                    key={module.id}
+                    type="button"
+                    onClick={() => onSelect(selected === module.id ? null : module.id)}
+                    aria-pressed={selected === module.id}
+                    title={module.name}
+                    className={`flex items-center gap-1.5 rounded-sm px-2 py-1.5 font-mono text-[9px] uppercase tracking-[0.1em] transition-colors ${
+                      selected === module.id
+                        ? 'text-ink'
+                        : 'text-ink/50 hover:bg-ink/5 hover:text-ink'
+                    }`}
+                    style={
+                      selected === module.id
+                        ? { backgroundColor: `${module.color}33`, color: '#17150F' }
+                        : undefined
+                    }
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 rounded-full"
+                      style={{ backgroundColor: module.color }}
+                      aria-hidden="true"
+                    />
+                    {module.number}
+                    <span className="hidden lg:inline">{module.name}</span>
+                    <span className="sr-only lg:hidden">{module.name}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex shrink-0 items-center gap-1">
+                {active ? (
+                  <>
+                    <span className="hidden px-1 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/40 sm:inline">
+                      {active.number} / 06
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => step(-1)}
+                      aria-label="Previous module"
+                      className="rounded-sm p-1.5 text-ink/55 transition-colors hover:bg-ink/5 hover:text-ink"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => step(1)}
+                      aria-label="Next module"
+                      className="rounded-sm p-1.5 text-ink/55 transition-colors hover:bg-ink/5 hover:text-ink"
+                    >
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                  </>
+                ) : (
+                  <span className="px-2 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/40">
+                    06 bays
+                  </span>
+                )}
               </div>
             </div>
           </div>
+
+          <div aria-live="polite" className="sr-only">
+            {active
+              ? `${active.name} selected. ${active.instinct}. ${active.time}.`
+              : 'Full deck view.'}
+          </div>
+
+          {active ? (
+            <div
+              id="module-dossier"
+              className="relative z-20 mx-3 mb-5 animate-rise border border-ink/20 bg-bone-50/95 p-5 shadow-[0_20px_60px_rgba(23,21,15,0.14)] backdrop-blur-sm sm:absolute sm:right-4 sm:top-14 sm:mx-0 sm:mb-0 sm:w-[320px]"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ochre">
+                  {active.number} — {active.code}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onSelect(null)}
+                  aria-label="Close module note"
+                  className="-mr-1 -mt-1 rounded-sm p-1 text-ink/45 transition-colors hover:bg-ink/5 hover:text-ink"
+                >
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              </div>
+              <h3 className="mt-2 font-display text-[28px] leading-none">{active.name}</h3>
+              <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.14em] text-ink/45">
+                {active.instinct} · {active.time}
+              </p>
+              <blockquote className="mt-4 border-l border-ochre pl-3 font-display text-[15px] italic leading-snug text-ink/75">
+                “{active.moment}”
+              </blockquote>
+              <p className="mt-4 text-[12.5px] leading-relaxed text-ink-soft">{active.description}</p>
+              <details className="group mt-4 border-t border-ink/15 pt-3">
+                <summary className="cursor-pointer list-none font-mono text-[9px] uppercase tracking-[0.14em] text-ink/50 transition-colors hover:text-ink">
+                  How it changes
+                  <span className="ml-1 inline-block transition-transform group-open:rotate-90" aria-hidden="true">
+                    ›
+                  </span>
+                </summary>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-ink-soft">{active.method}</p>
+              </details>
+              <div className="mt-4 flex items-center justify-between border-t border-ink/15 pt-3">
+                <span className="flex items-center gap-2">
+                  <Difficulty value={active.difficulty} color={active.color} />
+                  <span className="font-mono text-[8px] uppercase tracking-[0.1em] text-ink/40">
+                    Difficulty
+                  </span>
+                </span>
+                <a
+                  href="#modules"
+                  className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/60 underline decoration-ochre decoration-2 underline-offset-4 transition-colors hover:text-ink"
+                >
+                  Full entry
+                  <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -271,7 +389,7 @@ function Science() {
   );
 }
 
-function StationSection() {
+function StationSection({ onInspect }: { onInspect: (id: string) => void }) {
   const { addToCart, openCart } = useStore();
   const core = catalog['kit-core'];
 
@@ -280,7 +398,7 @@ function StationSection() {
       <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-28">
         <div className="lg:col-span-7">
           <Reveal>
-            <StationDiagram />
+            <StationDiagram onInspect={onInspect} />
           </Reveal>
         </div>
 
@@ -359,7 +477,7 @@ function StationSection() {
   );
 }
 
-function Modules() {
+function Modules({ onInspect }: { onInspect: (id: string) => void }) {
   const { addToCart, openCart } = useStore();
   const expansion = catalog['expansion-pack'];
 
@@ -421,6 +539,14 @@ function Modules() {
                 <span>{module.time}</span>
                 <span>Included in core</span>
               </div>
+              <button
+                type="button"
+                onClick={() => onInspect(module.id)}
+                className="mt-4 inline-flex items-center gap-1.5 self-start border-b border-ink/20 pb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-ink/55 transition-colors hover:border-ochre hover:text-ink"
+              >
+                Inspect in 3D
+                <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+              </button>
             </article>
           ))}
         </div>
@@ -454,8 +580,9 @@ function Modules() {
   );
 }
 
-function Scents() {
+function Scents({ onInspect }: { onInspect: (id: string) => void }) {
   const { addToCart, openCart } = useStore();
+  const [activeScent, setActiveScent] = useState<string | null>(null);
   const cartridges = catalog['scent-cartridges-4'];
 
   return (
@@ -479,33 +606,79 @@ function Scents() {
         </Reveal>
 
         <div className="mt-12 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 sm:grid-cols-2 lg:grid-cols-4">
-          {product.scents.map((scent) => (
-            <article key={scent.code} className="bg-bone-50 p-6 sm:p-7">
-              <div className="flex items-start justify-between">
-                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">
-                  {scent.code}
-                </span>
-                <span
-                  className="h-8 w-8 rounded-full border border-ink/10"
-                  style={{ backgroundColor: scent.color }}
-                  aria-hidden="true"
-                />
-              </div>
-              <h3 className="mt-6 font-display text-2xl leading-tight">{scent.name}</h3>
-              <p className="mt-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/45">
-                {scent.notes}
-              </p>
-              <div className="mt-5 flex items-center gap-1" aria-label={`Intensity ${scent.intensity} of 5`}>
-                {Array.from({ length: 5 }).map((_, i) => (
+          {product.scents.map((scent) => {
+            const pair = product.modules.find((module) => module.id === scent.pair);
+            const expanded = activeScent === scent.code;
+            return (
+              <article
+                key={scent.code}
+                onPointerMove={(event) => {
+                  const rect = event.currentTarget.getBoundingClientRect();
+                  event.currentTarget.style.setProperty('--scent-x', `${event.clientX - rect.left}px`);
+                  event.currentTarget.style.setProperty('--scent-y', `${event.clientY - rect.top}px`);
+                }}
+                className="scent-card lift relative flex flex-col overflow-hidden bg-bone-50 p-6 sm:p-7"
+              >
+                <div className="flex items-start justify-between">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">
+                    {scent.code}
+                  </span>
                   <span
-                    key={i}
-                    className={`h-[3px] flex-1 ${i < scent.intensity ? 'bg-ink' : 'bg-ink/10'}`}
+                    className="h-8 w-8 rounded-full border border-ink/10 transition-transform duration-500 group-hover:scale-105"
+                    style={{ backgroundColor: scent.color }}
+                    aria-hidden="true"
                   />
-                ))}
-              </div>
-              <p className="mt-4 text-[13px] leading-relaxed text-ink-soft">{scent.use}</p>
-            </article>
-          ))}
+                </div>
+                <h3 className="mt-6 font-display text-2xl leading-tight">{scent.name}</h3>
+                <p className="mt-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/45">
+                  {scent.notes}
+                </p>
+                <div className="mt-5 flex items-center gap-1" aria-label={`Intensity ${scent.intensity} of 5`}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-[3px] flex-1 ${i < scent.intensity ? 'bg-ink' : 'bg-ink/10'}`}
+                    />
+                  ))}
+                </div>
+                <p className="mt-4 text-[13px] leading-relaxed text-ink-soft">{scent.use}</p>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveScent(expanded ? null : scent.code)}
+                  aria-expanded={expanded}
+                  className="mt-4 inline-flex items-center gap-1.5 self-start border-b border-ink/20 pb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-ink/50 transition-colors hover:border-ochre hover:text-ink"
+                >
+                  {expanded ? 'Close note' : 'Scent note'}
+                  <span
+                    className={`inline-block transition-transform duration-300 ${expanded ? 'rotate-90' : ''}`}
+                    aria-hidden="true"
+                  >
+                    ›
+                  </span>
+                </button>
+
+                {expanded ? (
+                  <div className="mt-4 animate-rise border-t border-ink/15 pt-4">
+                    <p className="text-[12.5px] leading-relaxed text-ink-soft">
+                      Load one note at a time. The first three sessions stay shallow: one bay, one
+                      cartridge, reward easy to reach. Depth is a later conversation.
+                    </p>
+                    {pair ? (
+                      <button
+                        type="button"
+                        onClick={() => onInspect(pair.id)}
+                        className="mt-3 inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/55 underline decoration-ochre decoration-2 underline-offset-4 transition-colors hover:text-ink"
+                      >
+                        First pairing · {pair.name}
+                        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
 
         <Reveal>
@@ -612,11 +785,11 @@ function Comparison() {
               </thead>
               <tbody>
                 {product.comparison.map((row) => (
-                  <tr key={row.feature} className="border-b border-ink/10">
+                  <tr key={row.feature} className="group border-b border-ink/10 transition-colors hover:bg-bone-50/70">
                     <th scope="row" className="py-4 pr-6 text-[13px] font-normal text-ink/70">
                       {row.feature}
                     </th>
-                    <td className="bg-bone-50 px-4 py-4 text-[13px] font-medium text-ink">
+                    <td className="bg-bone-50 px-4 py-4 text-[13px] font-medium text-ink transition-colors group-hover:bg-ochre/10">
                       {row.station}
                     </td>
                     <td className="px-4 py-4 text-[13px] text-ink/50">{row.snuffle}</td>
@@ -711,6 +884,118 @@ function Notes() {
   );
 }
 
+function Wager() {
+  const [reading, setReading] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const readings = [
+    {
+      label: 'For the dog',
+      line: 'A problem with a scent at the end of it.',
+      note: 'Fifteen minutes of being excellent at something nobody had to explain. What changes is not the object. It is the dog’s confidence in its own nose.',
+    },
+    {
+      label: 'For you',
+      line: 'A reason to stop supervising and start noticing.',
+      note: 'The station asks for ten minutes, not a subscription to progress. The reward is a dog that settles because the work is finished, not because the treats ran out.',
+    },
+    {
+      label: 'For the room',
+      line: 'A quiet object that earns its place.',
+      note: 'Five passive bays. No app, no account, no light blinking for attention. The sixth bay clicks. That is the only sound it makes on its own.',
+    },
+  ];
+
+  const move = (delta: number) => {
+    const next = (reading + delta + readings.length) % readings.length;
+    setReading(next);
+    tabRefs.current[next]?.focus();
+  };
+  const active = readings[reading];
+
+  return (
+    <section aria-labelledby="wager-title" className="relative overflow-hidden border-b border-ink/15 bg-ink text-bone-50">
+      <div aria-hidden="true" className="grid-paper absolute inset-0 opacity-[0.16]" />
+      <div className="relative mx-auto max-w-[1400px] px-5 py-24 sm:px-8 lg:py-32">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-bone-50/40">
+              Interlude — the wager
+            </p>
+            <h2 id="wager-title" className="mt-6 font-display text-5xl leading-[0.96] tracking-[-0.03em] sm:text-6xl">
+              We are not
+              <br />
+              selling a toy.
+            </h2>
+            <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-bone-50/60">
+              A toy asks for attention. A station asks for a relationship with attention. Everything
+              else — the six bays, the four notes, the aluminium — is in service of that one sentence.
+            </p>
+          </div>
+
+          <div className="lg:col-span-7 lg:pt-2">
+            <div role="tablist" aria-label="Three readings of the station" className="flex flex-wrap gap-x-7 gap-y-2 border-b border-bone-50/15 pb-4">
+              {readings.map((item, index) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  role="tab"
+                  id={`wager-tab-${index}`}
+                  aria-selected={reading === index}
+                  aria-controls="wager-panel"
+                  tabIndex={reading === index ? 0 : -1}
+                  ref={(node) => {
+                    tabRefs.current[index] = node;
+                  }}
+                  onClick={() => setReading(index)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                      event.preventDefault();
+                      move(1);
+                    }
+                    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                      event.preventDefault();
+                      move(-1);
+                    }
+                  }}
+                  className={`relative pb-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                    reading === index ? 'text-bone-50' : 'text-bone-50/40 hover:text-bone-50/75'
+                  }`}
+                >
+                  {item.label}
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-x-0 -bottom-[17px] h-px origin-left bg-ochre transition-transform duration-500 ${
+                      reading === index ? 'scale-x-100' : 'scale-x-0'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div
+              role="tabpanel"
+              id="wager-panel"
+              aria-labelledby={`wager-tab-${reading}`}
+              className="min-h-[220px] pt-10"
+            >
+              <p key={`line-${reading}`} className="animate-rise max-w-2xl font-display text-3xl leading-[1.08] tracking-[-0.02em] sm:text-[2.6rem]">
+                {active.line}
+              </p>
+              <p key={`note-${reading}`} className="mt-6 max-w-lg animate-rise text-[13.5px] leading-relaxed text-bone-50/60">
+                {active.note}
+              </p>
+            </div>
+
+            <p className="mt-10 font-mono text-[9px] uppercase leading-relaxed tracking-[0.16em] text-bone-50/35">
+              Design principle no. 2 — attention, given a shape, becomes rest.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Guarantee() {
   return (
     <section className="border-b border-ink/15 bg-bone-100">
@@ -731,7 +1016,7 @@ function Guarantee() {
             </div>
             <div className="grid gap-px border border-ink/15 bg-ink/15 sm:grid-cols-3 lg:col-span-8">
               {product.guarantee.map((item, index) => (
-                <div key={item.title} className="bg-bone-50 p-6">
+                <div key={item.title} className="lift bg-bone-50 p-6">
                   <p className="font-display text-5xl leading-none text-ink/15">
                     {['60', '02', '∞'][index]}
                   </p>
@@ -876,19 +1161,32 @@ function Footer() {
 }
 
 export default function HomePage() {
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const select = useCallback((id: string | null) => setSelected(id), []);
+
+  const inspect = useCallback((id: string) => {
+    setSelected(id);
+    const target = document.getElementById('hero');
+    if (!target) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col bg-bone-50">
       <Header />
       <Cart />
       <main className="flex-1">
-        <Hero />
+        <Hero selected={selected} onSelect={select} />
         <Science />
-        <StationSection />
-        <Modules />
-        <Scents />
+        <StationSection onInspect={inspect} />
+        <Modules onInspect={inspect} />
+        <Scents onInspect={inspect} />
         <Build />
         <Comparison />
         <Notes />
+        <Wager />
         <Guarantee />
         <FAQ />
         <CTA />

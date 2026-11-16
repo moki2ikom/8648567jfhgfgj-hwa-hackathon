@@ -204,6 +204,39 @@ button:disabled {
     opacity: 1;
     transform: none;
   }
+
+  .lift:hover {
+    transform: none;
+  }
+}
+
+.lift {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 44px rgba(23, 21, 15, 0.07);
+}
+
+.scent-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(240px circle at var(--scent-x, 50%) var(--scent-y, 50%), rgba(200, 137, 47, 0.18), transparent 70%);
+  transition: opacity 0.5s ease;
+}
+
+.scent-card:hover::before {
+  opacity: 1;
+}
+
+.scent-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -220,4 +253,37 @@ button:disabled {
     opacity: 1;
     transform: none;
   }
+
+  .lift:hover {
+    transform: none;
+  }
+}
+
+.lift {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 44px rgba(23, 21, 15, 0.07);
+}
+
+.scent-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(240px circle at var(--scent-x, 50%) var(--scent-y, 50%), rgba(200, 137, 47, 0.18), transparent 70%);
+  transition: opacity 0.5s ease;
+}
+
+.scent-card:hover::before {
+  opacity: 1;
+}
+
+.scent-card > * {
+  position: relative;
+  z-index: 1;
 }

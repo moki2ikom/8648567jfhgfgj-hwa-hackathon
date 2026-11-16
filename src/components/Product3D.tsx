@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   ContactShadows,
   Environment,
+  Html,
   Lightformer,
   OrbitControls,
   RoundedBox,
@@ -18,9 +19,12 @@ import {
   Mesh,
   PCFShadowMap,
   PerspectiveCamera,
+  PointLight,
   SRGBColorSpace,
   Vector3,
 } from 'three';
+import type { RefObject } from 'react';
+import { product } from '@/lib/product';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
 
 const DECK_Y = 2.56;
@@ -515,6 +519,48 @@ const MODULE_BODIES: Record<string, () => React.ReactElement> = {
   'paw-press': PawPress,
 };
 
+function ModuleHalo({ color }: { color: string }) {
+  const group = useRef<Group>(null);
+  const reduced = useReducedMotion();
+  const motes = useMemo(
+    () =>
+      Array.from({ length: 9 }, (_, i) => {
+        const angle = (i / 9) * Math.PI * 2;
+        return {
+          x: Math.cos(angle) * (2.7 + (i % 3) * 0.3),
+          z: Math.sin(angle) * (2.7 + (i % 3) * 0.3),
+          speed: 0.35 + (i % 4) * 0.09,
+          offset: (i / 9) * 2.2,
+        };
+      }),
+    []
+  );
+
+  useFrame((state, delta) => {
+    if (!group.current || reduced) return;
+    group.current.rotation.y += delta * 0.22;
+    group.current.children.forEach((child, i) => {
+      const mote = motes[i];
+      if (!mote) return;
+      const progress = (state.clock.elapsedTime * mote.speed + mote.offset) % 2.2;
+      child.position.y = progress;
+      const material = (child as Mesh).material as { opacity: number };
+      material.opacity = Math.sin((progress / 2.2) * Math.PI) * 0.55;
+    });
+  });
+
+  return (
+    <group ref={group} position={[0, 1.8, 0]}>
+      {motes.map((mote, i) => (
+        <mesh key={i} position={[mote.x, 0, mote.z]} scale={0.055}>
+          <sphereGeometry args={[1, 8, 8]} />
+          <meshBasicMaterial color={color} transparent opacity={0.4} depthWrite={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 interface ModuleUnitProps {
   id: string;
   index: number;
@@ -529,25 +575,63 @@ function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUni
   const reduced = useReducedMotion();
   const [x, z] = SLOTS[id];
   const Body = MODULE_BODIES[id];
+  const meta = product.modules.find((item) => item.id === id);
+  const color = MODULE_COLORS[id];
 
   useFrame((state, delta) => {
     if (!group.current) return;
     const time = state.clock.elapsedTime;
-    const lift = active || hovered ? 0.18 : 0;
+    const lift = active ? 0.92 : hovered ? 0.24 : 0;
+    const scaleTarget = active ? 1.06 : hovered ? 1.02 : 1;
     if (reduced) {
       group.current.position.y = DECK_Y + lift;
-      group.current.scale.setScalar(1);
+      group.current.scale.setScalar(scaleTarget);
+      group.current.rotation.y = 0;
       return;
     }
-    group.current.position.y = MathUtils.damp(group.current.position.y, DECK_Y + lift, 7, delta);
     const appear = MathUtils.clamp((time - 0.25 - index * 0.08) / 0.6, 0, 1);
     const eased = 1 - Math.pow(1 - appear, 3);
-    group.current.scale.setScalar(0.86 + eased * 0.14);
+    const breathe = active ? Math.sin(time * 1.6) * 0.045 : 0;
+    group.current.position.y = MathUtils.damp(
+      group.current.position.y,
+      DECK_Y + lift + breathe,
+      7,
+      delta
+    );
+    group.current.scale.setScalar(
+      MathUtils.damp(group.current.scale.x, (0.86 + eased * 0.14) * scaleTarget, 8, delta)
+    );
+    group.current.rotation.y = MathUtils.damp(
+      group.current.rotation.y,
+      active ? Math.sin(time * 0.5) * 0.09 : 0,
+      4,
+      delta
+    );
   });
 
   return (
     <group ref={group} position={[x, DECK_Y - 1.2, z]}>
       <Body />
+      {active ? <ModuleHalo color={color} /> : null}
+      {(hovered || active) && meta ? (
+        <Html
+          position={[0, 3.9, 0]}
+          center
+          distanceFactor={14}
+          zIndexRange={[40, 0]}
+          style={{ pointerEvents: 'none' }}
+        >
+          <div className="pointer-events-none whitespace-nowrap rounded-sm border border-ink/20 bg-bone-50/95 px-3 py-2 shadow-[0_10px_30px_rgba(23,21,15,0.16)] backdrop-blur-sm">
+            <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-ochre">
+              {meta.number} — {meta.instinct}
+            </p>
+            <p className="mt-0.5 font-display text-base leading-tight text-ink">{meta.name}</p>
+            <p className="mt-1 font-mono text-[7px] uppercase tracking-[0.14em] text-ink/40">
+              {active ? 'Reading note open' : 'Click to inspect'}
+            </p>
+          </div>
+        </Html>
+      ) : null}
       <mesh
         position={[0, 1.4, 0]}
         onPointerOver={(event) => {
@@ -664,12 +748,35 @@ function CameraRig() {
   return null;
 }
 
+function SelectionGlow({ selected }: { selected: string | null }) {
+  const light = useRef<PointLight>(null);
+  const [x, z] = selected ? SLOTS[selected] : [0, 0];
+
+  useFrame((_, delta) => {
+    if (!light.current) return;
+    light.current.intensity = MathUtils.damp(light.current.intensity, selected ? 7 : 0, 5, delta);
+    light.current.position.x = MathUtils.damp(light.current.position.x, x, 5, delta);
+    light.current.position.z = MathUtils.damp(light.current.position.z, z, 5, delta);
+  });
+
+  return (
+    <pointLight
+      ref={light}
+      position={[x, DECK_Y + 3.5, z]}
+      color={selected ? MODULE_COLORS[selected] : '#FFF3DF'}
+      distance={16}
+      decay={2}
+      intensity={0}
+    />
+  );
+}
+
 function Station({
   selected,
   onSelect,
 }: {
   selected: string | null;
-  onSelect: (id: string) => void;
+  onSelect: (id: string | null) => void;
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const root = useRef<Group>(null);
@@ -725,8 +832,56 @@ function Station({
         })}
       </group>
       <ScentDust />
+      <SelectionGlow selected={selected} />
     </group>
   );
+}
+
+type OrbitHandle = React.ComponentRef<typeof OrbitControls>;
+
+function CameraFocus({
+  controlsRef,
+  selected,
+}: {
+  controlsRef: RefObject<OrbitHandle | null>;
+  selected: string | null;
+}) {
+  const { size } = useThree();
+  const focus = useRef(0);
+  const last = useRef<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (last.current === selected) return;
+    last.current = selected;
+    focus.current = 1;
+  }, [selected]);
+
+  useFrame((_, delta) => {
+    const controls = controlsRef.current;
+    if (!controls || focus.current <= 0) return;
+    const camera = controls.object;
+    focus.current = Math.max(0, focus.current - delta / 1.25);
+    const mobile = size.width < 640;
+    const slot = selected ? SLOTS[selected] : null;
+    const tx = slot ? slot[0] : 0;
+    const ty = slot ? DECK_Y + 1.55 : 3.1;
+    const tz = slot ? slot[1] : 0;
+    const target = controls.target;
+    target.x = MathUtils.damp(target.x, tx, 5, delta);
+    target.y = MathUtils.damp(target.y, ty, 5, delta);
+    target.z = MathUtils.damp(target.z, tz, 5, delta);
+
+    const distance = slot ? (mobile ? 16.5 : 17) : mobile ? 31 : 28;
+    const direction = camera.position.clone().sub(target);
+    if (direction.lengthSq() < 0.01) direction.set(0.6, 1.2, 1.8);
+    direction.normalize().multiplyScalar(distance);
+    const wanted = target.clone().add(direction);
+    camera.position.x = MathUtils.damp(camera.position.x, wanted.x, 5, delta);
+    camera.position.y = MathUtils.damp(camera.position.y, wanted.y, 5, delta);
+    camera.position.z = MathUtils.damp(camera.position.z, wanted.z, 5, delta);
+  });
+
+  return null;
 }
 
 function Scene({
@@ -734,8 +889,9 @@ function Scene({
   onSelect,
 }: {
   selected: string | null;
-  onSelect: (id: string) => void;
+  onSelect: (id: string | null) => void;
 }) {
+  const controlsRef = useRef<OrbitHandle>(null);
   return (
     <>
       <StudioEnvironment />
@@ -773,7 +929,9 @@ function Scene({
         color="#2B2115"
       />
       <CameraRig />
+      <CameraFocus controlsRef={controlsRef} selected={selected} />
       <OrbitControls
+        ref={controlsRef}
         target={[0, 3.1, 0]}
         enablePan={false}
         enableDamping
@@ -793,7 +951,7 @@ function Scene({
 
 interface Product3DProps {
   selected?: string | null;
-  onSelect?: (id: string) => void;
+  onSelect?: (id: string | null) => void;
   className?: string;
 }
 
@@ -828,6 +986,7 @@ export function Product3D({ selected = null, onSelect, className }: Product3DPro
             shadows={{ type: PCFShadowMap }}
             camera={{ position: [15, 12.5, 20.5], fov: 32 }}
             gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+            onPointerMissed={() => onSelect?.(null)}
             onCreated={({ gl }) => {
               gl.domElement.addEventListener('webglcontextlost', (event) => {
                 event.preventDefault();
@@ -844,9 +1003,9 @@ export function Product3D({ selected = null, onSelect, className }: Product3DPro
           </Canvas>
         </Suspense>
       )}
-      <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40">
+      <div className="pointer-events-none absolute bottom-16 left-4 hidden items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40 sm:flex">
         <span className="inline-block h-1 w-1 rounded-full bg-ochre" />
-        Drag to orbit · Scroll to zoom
+        {selected ? 'Drag to orbit · Click the deck to reset' : 'Drag to orbit · Select a module'}
       </div>
     </div>
   );

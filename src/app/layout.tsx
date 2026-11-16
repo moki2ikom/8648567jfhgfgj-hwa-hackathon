@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import "./globals.css";
 
 const inter = Inter({
@@ -74,7 +75,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-scroll-behavior="smooth"
       className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-bone-50 text-ink">{children}</body>
+      <body className="flex min-h-full flex-col bg-bone-50 text-ink">
+        <ScrollProgress />
+        {children}
+      </body>
     </html>
   );
 }

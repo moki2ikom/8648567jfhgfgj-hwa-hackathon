@@ -41,6 +41,8 @@ export const product = {
         'Sliding panels hide four interchangeable scent trails. The dog follows a line of scent, not a line of sight, and learns to work an edge before committing.',
       method:
         'Four cartridges slot under the maze floor. Move a wall, change the reward well, and the same board becomes a different problem.',
+      moment:
+        'The head drops before the first step. She is not looking for the treat; she is reading the room.',
       color: '#B96A4C',
     },
     {
@@ -55,6 +57,8 @@ export const product = {
         'A clear drum on a brass axle releases kibble at a rate you control. Three internal baffles tune the problem from beginner to genuinely annoying.',
       method:
         'Rotate the baffle ring to change how easily treats fall. The drum is transparent, so the dog can see the reward but not the route to it.',
+      moment:
+        'The first clatter stops the room. Ears forward, one paw testing the drum.',
       color: '#C58F2E',
     },
     {
@@ -69,6 +73,8 @@ export const product = {
         'Six hinged lids with six different openings: lift, slide, rotate, press, nudge, latch. Treat placement can be random or patterned.',
       method:
         'Each lid has a different resistance and hinge direction. Start with two lids open; add one per week until the dog is working the full row.',
+      moment:
+        'Nose finds the seam. Paw tests the hinge. The lid gives with a small wooden knock.',
       color: '#5E7F9C',
     },
     {
@@ -83,6 +89,8 @@ export const product = {
         'A washable fleece coil with 30 hidden pockets. Bury treats deep or shallow and let the dog work the whole length of the spiral.',
       method:
         'The spiral is replaceable and machine washable. Compression changes the difficulty: a loose coil is easy, a packed one is real work.',
+      moment:
+        'A long exhale into fleece. The shoulders drop. The search becomes a kind of rest.',
       color: '#946F8A',
     },
     {
@@ -97,6 +105,8 @@ export const product = {
         'Six vertical tubes from 40 to 90 mm deep. Smear, drop or wedge the reward — the dog has to solve the angle as well as the depth.',
       method:
         'Brass collars mark each depth. Swap the tube inserts to change bore and difficulty without changing the module.',
+      moment:
+        'The reach upward — front paws light, back legs working, the whole body in the question.',
       color: '#6E8A77',
     },
     {
@@ -111,6 +121,8 @@ export const product = {
         'Four large buttons with a soft click. Press the lit sequence to earn a reward; sequences grow from two steps to six.',
       method:
         'The only powered module: three AA cells last roughly six months. No app required, no account, no subscription.',
+      moment:
+        'The pause after the click. The moment a dog learns the world answers back.',
       color: '#C47968',
     },
   ],
@@ -123,6 +135,7 @@ export const product = {
       intensity: 3,
       color: '#C8892F',
       use: 'The reliable start. High value, low confusion.',
+      pair: 'scent-maze',
     },
     {
       code: 'S-02',
@@ -131,6 +144,7 @@ export const product = {
       intensity: 5,
       color: '#B96A4C',
       use: 'For dogs who need a louder invitation.',
+      pair: 'treat-tumble',
     },
     {
       code: 'S-03',
@@ -139,6 +153,7 @@ export const product = {
       intensity: 4,
       color: '#C58F2E',
       use: 'A long trail that rewards patience.',
+      pair: 'flip-find',
     },
     {
       code: 'S-04',
@@ -147,6 +162,7 @@ export const product = {
       intensity: 5,
       color: '#946F8A',
       use: 'The final cartridge. Use sparingly.',
+      pair: 'snuffle-spiral',
     },
   ],
 
