@@ -325,7 +325,7 @@ function CheckoutContent() {
       <div className="flex min-h-screen flex-col bg-bone-50">
         <Header />
         <Cart />
-        <main className="flex flex-1 items-center justify-center px-5 py-24">
+        <main id="main" className="flex flex-1 items-center justify-center px-5 py-24">
           <div className="text-center">
             <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border border-ink/15 border-t-ochre" />
             <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40">
@@ -342,7 +342,7 @@ function CheckoutContent() {
       <div className="flex min-h-screen flex-col bg-bone-50">
         <Header />
         <Cart />
-        <main className="flex flex-1 items-center justify-center px-5 py-24">
+        <main id="main" className="flex flex-1 items-center justify-center px-5 py-24">
           <div className="max-w-md text-center">
             <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-ochre">Checkout</p>
             <h1 className="mt-4 font-display text-4xl">The cart is empty.</h1>
@@ -377,7 +377,7 @@ function CheckoutContent() {
       <Header />
       <Cart />
 
-      <main className="flex-1 px-5 py-10 sm:px-8 sm:py-14">
+      <main id="main" className="flex-1 px-5 py-10 sm:px-8 sm:py-14">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col justify-between gap-6 border-b border-ink/15 pb-6 sm:flex-row sm:items-end">
             <div>
@@ -421,7 +421,7 @@ function CheckoutContent() {
                 }}
               >
                 {step === 'contact' && (
-                  <fieldset className="border border-ink/15 bg-bone-50 p-5 sm:p-7">
+                  <fieldset key={step} className="animate-rise border border-ink/15 bg-bone-50 p-5 sm:p-7">
                     <legend className="sr-only">Contact information</legend>
                     <div className="mb-5 flex items-baseline justify-between">
                       <h2 className="font-display text-2xl">Where should we write?</h2>
@@ -449,7 +449,7 @@ function CheckoutContent() {
                 )}
 
                 {step === 'delivery' && (
-                  <fieldset className="border border-ink/15 bg-bone-50 p-5 sm:p-7">
+                  <fieldset key={step} className="animate-rise border border-ink/15 bg-bone-50 p-5 sm:p-7">
                     <legend className="sr-only">Delivery details</legend>
                     <div className="mb-5 flex items-baseline justify-between">
                       <h2 className="font-display text-2xl">Where does it land?</h2>
@@ -541,7 +541,7 @@ function CheckoutContent() {
                 )}
 
                 {step === 'review' && (
-                  <div className="border border-ink/15 bg-bone-50 p-5 sm:p-7">
+                  <div key="review" className="animate-rise border border-ink/15 bg-bone-50 p-5 sm:p-7">
                     <div className="mb-5 flex items-baseline justify-between">
                       <h2 className="font-display text-2xl">Check it once.</h2>
                       <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-ink/35">Step 03</span>
@@ -640,7 +640,7 @@ export default function CheckoutPage() {
         <div className="flex min-h-screen flex-col bg-bone-50">
           <Header />
           <Cart />
-          <main className="flex flex-1 items-center justify-center">
+          <main id="main" className="flex flex-1 items-center justify-center">
             <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40">Loading checkout</p>
           </main>
         </div>

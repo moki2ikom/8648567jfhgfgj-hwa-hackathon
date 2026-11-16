@@ -70,14 +70,14 @@ export function Cart() {
     <div className="fixed inset-0 z-[70]">
       <button
         type="button"
-        className="absolute inset-0 h-full w-full cursor-default bg-ink/40 backdrop-blur-[2px]"
+        className="animate-fade-in absolute inset-0 h-full w-full cursor-default bg-ink/40 backdrop-blur-[2px]"
         onClick={closeCart}
         aria-label="Close cart"
         tabIndex={-1}
       />
       <aside
         ref={panelRef}
-        className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-ink/20 bg-bone-50 shadow-[-24px_0_60px_rgba(23,21,15,0.18)]"
+        className="animate-cart-in absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-ink/20 bg-bone-50 shadow-[-24px_0_60px_rgba(23,21,15,0.18)]"
         role="dialog"
         aria-modal="true"
         aria-label="Shopping cart"

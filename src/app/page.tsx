@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Star, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight, Check, Shuffle, Star, X } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Cart } from '@/components/Cart';
 import dynamic from 'next/dynamic';
@@ -312,6 +312,31 @@ function Hero({
 }
 
 function Science() {
+  const [open, setOpen] = useState(0);
+  const principles = [
+    {
+      n: '01',
+      title: 'Scent is the doorway',
+      text: 'Nose work asks a dog to gather information with the sense they already use to read a room. It is tiring in a different way from running — shorter sessions, more recovery.',
+      detail: 'A dog can separate a trail into layers: direction, age, concentration. The station gives that ability a place to work.',
+      cue: 'Track · search',
+    },
+    {
+      n: '02',
+      title: 'Novelty needs a schedule',
+      text: 'Change two modules and one cartridge each week. The deck stays familiar; the problem does not. That small rotation is the difference between a toy and a practice.',
+      detail: 'Twelve weekly configurations ship with the station. After that, the permutations are yours to rebuild.',
+      cue: 'Rotate · rebuild',
+    },
+    {
+      n: '03',
+      title: 'Solving is rest',
+      text: 'A focused scent session gives a dog a job with a clear end. Many dogs settle afterward; adjust duration for age and mobility.',
+      detail: 'The goal is not exhaustion. It is the quiet that arrives when the nose has finished its sentence.',
+      cue: 'Solve · settle',
+    },
+  ];
+
   return (
     <section id="science" className="border-b border-ink/15">
       <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-28">
@@ -351,38 +376,54 @@ function Science() {
             </p>
           </Reveal>
 
-          <div className="mt-10 divide-y divide-ink/15 border-y border-ink/15">
-            {[
-              {
-                n: '01',
-                title: 'Scent is the doorway',
-                text: 'Nose work asks a dog to gather information with the sense they already use to read a room. It is tiring in a different way from running.',
-              },
-              {
-                n: '02',
-                title: 'Novelty needs a schedule',
-                text: 'Change two modules and one cartridge each week. The deck stays familiar; the problem does not.',
-              },
-              {
-                n: '03',
-                title: 'Solving is rest',
-                text: 'A focused scent session gives a dog a job with a clear end. Many dogs settle afterward; adjust duration for age and mobility.',
-              },
-            ].map((item) => (
-              <div key={item.n} className="grid grid-cols-[40px_1fr] gap-4 py-5 sm:grid-cols-[56px_1fr]">
-                <span className="font-mono text-[10px] text-ochre">{item.n}</span>
-                <div>
-                  <h3 className="font-display text-xl leading-tight">{item.title}</h3>
-                  <p className="mt-1.5 max-w-lg text-[14px] leading-relaxed text-ink-soft">{item.text}</p>
+          <div className="mt-10 border-y border-ink/15">
+            {principles.map((item, index) => {
+              const expanded = open === index;
+              return (
+                <div key={item.n} className="border-b border-ink/15 last:border-b-0">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(expanded ? -1 : index)}
+                    aria-expanded={expanded}
+                    className="grid w-full grid-cols-[40px_1fr_auto] items-center gap-4 py-5 text-left transition-colors hover:bg-bone-100/60 sm:grid-cols-[56px_1fr_auto]"
+                  >
+                    <span className={`font-mono text-[10px] transition-colors ${expanded ? 'text-ochre' : 'text-ink/35'}`}>
+                      {item.n}
+                    </span>
+                    <span>
+                      <span className="block font-display text-xl leading-tight">{item.title}</span>
+                      <span className="mt-0.5 block font-mono text-[8px] uppercase tracking-[0.14em] text-ink/40">
+                        {item.cue}
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`mr-1 text-lg font-light text-ink/40 transition-transform duration-300 ${expanded ? 'rotate-45' : ''}`}
+                    >
+                      +
+                    </span>
+                  </button>
+                  {expanded ? (
+                    <div className="animate-rise pb-6 pl-[56px] pr-6 sm:pl-[72px]">
+                      <p className="max-w-xl text-[14px] leading-relaxed text-ink-soft">{item.text}</p>
+                      <p className="mt-3 max-w-xl border-l border-ochre/60 pl-4 text-[13px] leading-relaxed text-ink/55">
+                        {item.detail}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <p className="mt-5 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-ink/40">
-            Designed around nose-work fundamentals: track, search, manipulate, persist — then
-            rest.
-          </p>
+          <div className="mt-5 flex items-center justify-between gap-4">
+            <p className="font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-ink/40">
+              Designed around nose-work fundamentals: track, search, manipulate, persist — then rest.
+            </p>
+            <span className="flex-shrink-0 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/30">
+              {String(open + 1).padStart(2, '0')} / 03
+            </span>
+          </div>
         </div>
       </div>
     </section>
@@ -480,6 +521,14 @@ function StationSection({ onInspect }: { onInspect: (id: string) => void }) {
 function Modules({ onInspect }: { onInspect: (id: string) => void }) {
   const { addToCart, openCart } = useStore();
   const expansion = catalog['expansion-pack'];
+  const [activeId, setActiveId] = useState(product.modules[0].id);
+  const activeIndex = product.modules.findIndex((module) => module.id === activeId);
+  const active = product.modules[activeIndex];
+
+  const step = (direction: number) => {
+    const next = (activeIndex + direction + product.modules.length) % product.modules.length;
+    setActiveId(product.modules[next].id);
+  };
 
   return (
     <section id="modules" className="border-b border-ink/15">
@@ -501,54 +550,139 @@ function Modules({ onInspect }: { onInspect: (id: string) => void }) {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 sm:grid-cols-2 lg:grid-cols-3">
-          {product.modules.map((module) => (
-            <article
-              key={module.id}
-              className="group relative flex flex-col bg-bone-50 p-6 transition-colors duration-500 hover:bg-bone-100 sm:p-7"
-            >
-              <div className="flex items-start justify-between">
+        <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden border border-ink/15 bg-ink/15 lg:grid-cols-12">
+          <div className="bg-bone-50 lg:col-span-4">
+            <div className="flex items-center justify-between border-b border-ink/15 px-5 py-4 sm:px-6">
+              <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">Module index</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-ink/40">
+                {active.number} / 06
+              </span>
+            </div>
+            <div role="group" aria-label="Choose a module" className="flex flex-col">
+              {product.modules.map((module) => {
+                const selected = module.id === activeId;
+                return (
+                  <button
+                    key={module.id}
+                    type="button"
+                    onClick={() => setActiveId(module.id)}
+                    aria-pressed={selected}
+                    className={`group/index flex items-center gap-4 border-b border-ink/10 px-5 py-4 text-left transition-colors duration-300 last:border-b-0 sm:px-6 ${
+                      selected ? 'bg-ink text-bone-50' : 'hover:bg-bone-100'
+                    }`}
+                  >
+                    <span
+                      className={`font-mono text-[9px] tracking-[0.1em] ${selected ? 'text-ochre-light' : 'text-ink/35'}`}
+                    >
+                      {module.number}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className={`block font-display text-[19px] leading-tight ${selected ? 'text-bone-50' : 'text-ink'}`}>
+                        {module.name}
+                      </span>
+                      <span className={`mt-0.5 block font-mono text-[8px] uppercase tracking-[0.12em] ${selected ? 'text-bone-50/50' : 'text-ink/40'}`}>
+                        {module.instinct}
+                      </span>
+                    </span>
+                    <span
+                      className="h-2 w-2 flex-shrink-0 rounded-full transition-transform duration-300 group-hover/index:scale-125"
+                      style={{ backgroundColor: module.color }}
+                      aria-hidden="true"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+            <p className="border-t border-ink/15 px-5 py-4 font-mono text-[8px] uppercase leading-relaxed tracking-[0.1em] text-ink/35 sm:px-6">
+              Every bay accepts every module · 720 deck permutations
+            </p>
+          </div>
+
+          <div className="bg-bone-50 p-5 sm:p-8 lg:col-span-8">
+            <div key={active.id} className="animate-rise">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/40">
-                    {module.number} / {module.code.split('/')[1]?.trim()}
+                  <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ochre">
+                    {active.number} — {active.code} / {active.instinct}
                   </p>
-                  <h3 className="mt-3 font-display text-[26px] leading-none">{module.name}</h3>
+                  <h3 className="mt-3 font-display text-[34px] leading-none tracking-[-0.02em] sm:text-[44px]">
+                    {active.name}
+                  </h3>
                 </div>
-                <span
-                  className="mt-1 h-3 w-3 rounded-full"
-                  style={{ backgroundColor: module.color }}
-                  aria-hidden="true"
-                />
+                <div className="text-right">
+                  <Difficulty value={active.difficulty} color={active.color} />
+                  <p className="mt-1.5 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/40">
+                    Difficulty · {active.time}
+                  </p>
+                </div>
               </div>
 
-              <div className="mt-5 aspect-[4/3] w-full rounded-sm border border-ink/10 bg-bone-100/60 p-4 transition-colors group-hover:bg-bone-50">
-                <ModuleGlyph id={module.id} accent={module.color} />
+              <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] sm:gap-8">
+                <div>
+                  <div className="aspect-[4/3] w-full border border-ink/10 bg-bone-100/70 p-5">
+                    <ModuleGlyph id={active.id} accent={active.color} />
+                  </div>
+                  <blockquote className="mt-5 border-l border-ochre pl-4 font-display text-[17px] italic leading-snug text-ink/75">
+                    “{active.moment}”
+                  </blockquote>
+                </div>
+
+                <div>
+                  <p className="text-[14px] leading-relaxed text-ink-soft">{active.description}</p>
+                  <div className="mt-6 border-t border-ink/15 pt-4">
+                    <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">How it changes</p>
+                    <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{active.method}</p>
+                  </div>
+                  <div className="mt-6 flex flex-wrap items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => onInspect(active.id)}
+                      className="inline-flex items-center gap-2 rounded-sm bg-ink px-5 py-3 font-mono text-[9px] uppercase tracking-[0.16em] text-bone-50 transition-colors hover:bg-moss"
+                    >
+                      Inspect in 3D
+                      <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                    </button>
+                    <span className="font-mono text-[8px] uppercase tracking-[0.1em] text-ink/35">
+                      Included in every core deck
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              <p className="mt-5 flex-1 text-[13.5px] leading-relaxed text-ink-soft">
-                {module.description}
-              </p>
-
-              <div className="mt-5 flex items-center justify-between border-t border-ink/15 pt-3">
-                <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
-                  {module.instinct}
-                </span>
-                <Difficulty value={module.difficulty} color={module.color} />
+              <div className="mt-8 flex items-center justify-between border-t border-ink/15 pt-4">
+                <div className="flex items-center gap-1">
+                  {product.modules.map((module) => (
+                    <button
+                      key={module.id}
+                      type="button"
+                      onClick={() => setActiveId(module.id)}
+                      aria-label={`Show ${module.name}`}
+                      aria-pressed={module.id === activeId}
+                      className={`h-1 w-6 transition-colors ${module.id === activeId ? 'bg-ink' : 'bg-ink/15 hover:bg-ink/40'}`}
+                    />
+                  ))}
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => step(-1)}
+                    aria-label="Previous module"
+                    className="rounded-sm p-2 text-ink/50 transition-colors hover:bg-ink/5 hover:text-ink"
+                  >
+                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => step(1)}
+                    aria-label="Next module"
+                    className="rounded-sm p-2 text-ink/50 transition-colors hover:bg-ink/5 hover:text-ink"
+                  >
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
               </div>
-              <div className="mt-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.12em] text-ink/40">
-                <span>{module.time}</span>
-                <span>Included in core</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => onInspect(module.id)}
-                className="mt-4 inline-flex items-center gap-1.5 self-start border-b border-ink/20 pb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-ink/55 transition-colors hover:border-ochre hover:text-ink"
-              >
-                Inspect in 3D
-                <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-              </button>
-            </article>
-          ))}
+            </div>
+          </div>
         </div>
 
         <Reveal>
@@ -741,6 +875,8 @@ function Build() {
 }
 
 function Comparison() {
+  const [openRow, setOpenRow] = useState<string | null>(null);
+
   return (
     <section className="border-b border-ink/15 bg-bone-100">
       <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
@@ -756,6 +892,9 @@ function Comparison() {
               <p className="max-w-md text-[15px] leading-relaxed text-ink-soft">
                 Snuffle mats, treat balls and fixed boards all do one job well. The station is for
                 the dog who has already learned the one job.
+              </p>
+              <p className="mt-3 font-mono text-[8px] uppercase tracking-[0.14em] text-ink/40">
+                Select a row to read the difference
               </p>
             </div>
           </div>
@@ -784,19 +923,47 @@ function Comparison() {
                 </tr>
               </thead>
               <tbody>
-                {product.comparison.map((row) => (
-                  <tr key={row.feature} className="group border-b border-ink/10 transition-colors hover:bg-bone-50/70">
-                    <th scope="row" className="py-4 pr-6 text-[13px] font-normal text-ink/70">
-                      {row.feature}
-                    </th>
-                    <td className="bg-bone-50 px-4 py-4 text-[13px] font-medium text-ink transition-colors group-hover:bg-ochre/10">
-                      {row.station}
-                    </td>
-                    <td className="px-4 py-4 text-[13px] text-ink/50">{row.snuffle}</td>
-                    <td className="px-4 py-4 text-[13px] text-ink/50">{row.ball}</td>
-                    <td className="px-4 py-4 text-[13px] text-ink/50">{row.puzzle}</td>
-                  </tr>
-                ))}
+                {product.comparison.map((row) => {
+                  const expanded = openRow === row.feature;
+                  return (
+                    <Fragment key={row.feature}>
+                      <tr className="group border-b border-ink/10 transition-colors hover:bg-bone-50/70">
+                        <th scope="row" className="py-0 pr-6 text-left text-[13px] font-normal text-ink/70">
+                          <button
+                            type="button"
+                            onClick={() => setOpenRow(expanded ? null : row.feature)}
+                            aria-expanded={expanded}
+                            className="flex w-full items-center gap-2 py-4 text-left transition-colors group-hover:text-ink"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={`text-[13px] text-ink/30 transition-transform duration-300 ${expanded ? 'rotate-45' : ''}`}
+                            >
+                              +
+                            </span>
+                            {row.feature}
+                          </button>
+                        </th>
+                        <td className="bg-bone-50 px-4 py-4 text-[13px] font-medium text-ink transition-colors group-hover:bg-ochre/10">
+                          {row.station}
+                        </td>
+                        <td className="px-4 py-4 text-[13px] text-ink/50">{row.snuffle}</td>
+                        <td className="px-4 py-4 text-[13px] text-ink/50">{row.ball}</td>
+                        <td className="px-4 py-4 text-[13px] text-ink/50">{row.puzzle}</td>
+                      </tr>
+                      {expanded ? (
+                        <tr className="border-b border-ink/10 bg-bone-50/80">
+                          <td colSpan={5} className="px-4 py-0">
+                            <div className="flex animate-rise items-start gap-3 py-4">
+                              <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-ochre" aria-hidden="true" />
+                              <p className="max-w-2xl text-[13px] leading-relaxed text-ink-soft">{row.note}</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : null}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -807,6 +974,12 @@ function Comparison() {
 }
 
 function Notes() {
+  const filters = ['All', 'Active', 'Senior', 'First-timer'] as const;
+  const [filter, setFilter] = useState<(typeof filters)[number]>('All');
+  const visible = product.reviews.filter(
+    (review) => filter === 'All' || review.tags.includes(filter)
+  );
+
   return (
     <section id="notes" className="border-b border-ink/15">
       <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-28">
@@ -844,9 +1017,35 @@ function Notes() {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 lg:grid-cols-2">
-          {product.reviews.map((review) => (
-            <article key={review.id} className="flex flex-col bg-bone-50 p-6 sm:p-8">
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-y border-ink/15 py-4">
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter field notes by household">
+            {filters.map((item) => {
+              const active = filter === item;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setFilter(item)}
+                  aria-pressed={active}
+                  className={`rounded-full border px-3.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.12em] transition-colors ${
+                    active
+                      ? 'border-ink bg-ink text-bone-50'
+                      : 'border-ink/20 text-ink/50 hover:border-ink/45 hover:text-ink'
+                  }`}
+                >
+                  {item}
+                </button>
+              );
+            })}
+          </div>
+          <p className="font-mono text-[8px] uppercase tracking-[0.12em] text-ink/35">
+            Showing {String(visible.length).padStart(2, '0')} of {String(product.reviews.length).padStart(2, '0')}
+          </p>
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-px border border-ink/15 bg-ink/15 lg:grid-cols-2">
+          {visible.map((review) => (
+            <article key={`${filter}-${review.id}`} className="flex animate-rise flex-col bg-bone-50 p-6 sm:p-8">
               <div className="flex items-center justify-between">
                 <div className="flex gap-0.5" aria-label={`${review.rating} out of 5 stars`}>
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -867,7 +1066,18 @@ function Notes() {
                 “{review.text}”
               </p>
 
-              <footer className="mt-6 flex items-end justify-between border-t border-ink/15 pt-4">
+              <div className="mt-5 flex flex-wrap gap-1.5">
+                {review.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="border border-ink/15 px-2 py-0.5 font-mono text-[7px] uppercase tracking-[0.12em] text-ink/40"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <footer className="mt-5 flex items-end justify-between border-t border-ink/15 pt-4">
                 <div>
                   <p className="text-[13px] font-medium">{review.name}</p>
                   <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-ink/40">
@@ -997,6 +1207,8 @@ function Wager() {
 }
 
 function Guarantee() {
+  const [openCard, setOpenCard] = useState(0);
+
   return (
     <section className="border-b border-ink/15 bg-bone-100">
       <div className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:py-24">
@@ -1013,17 +1225,43 @@ function Guarantee() {
                 Enrichment is personal. If the station does not fit your dog, we take it back and
                 pay the return shipping. No forms, no restocking fee.
               </p>
+              <p className="mt-5 font-mono text-[8px] uppercase tracking-[0.14em] text-ink/40">
+                Select a promise to read the detail
+              </p>
             </div>
             <div className="grid gap-px border border-ink/15 bg-ink/15 sm:grid-cols-3 lg:col-span-8">
-              {product.guarantee.map((item, index) => (
-                <div key={item.title} className="lift bg-bone-50 p-6">
-                  <p className="font-display text-5xl leading-none text-ink/15">
-                    {['60', '02', '∞'][index]}
-                  </p>
-                  <h3 className="mt-6 font-display text-xl leading-tight">{item.title}</h3>
-                  <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{item.text}</p>
-                </div>
-              ))}
+              {product.guarantee.map((item, index) => {
+                const expanded = openCard === index;
+                return (
+                  <div key={item.title} className="flex flex-col bg-bone-50">
+                    <button
+                      type="button"
+                      onClick={() => setOpenCard(expanded ? -1 : index)}
+                      aria-expanded={expanded}
+                      className="flex flex-1 flex-col p-6 text-left"
+                    >
+                      <span className="flex items-start justify-between gap-3">
+                        <span className="font-display text-5xl leading-none text-ink/15">
+                          {['60', '02', '∞'][index]}
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className={`mt-1 font-mono text-sm text-ink/30 transition-transform duration-300 ${expanded ? 'rotate-45' : ''}`}
+                        >
+                          +
+                        </span>
+                      </span>
+                      <h3 className="mt-6 font-display text-xl leading-tight">{item.title}</h3>
+                      <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{item.text}</p>
+                    </button>
+                    {expanded ? (
+                      <div className="animate-rise border-t border-ink/15 px-6 py-4">
+                        <p className="text-[12.5px] leading-relaxed text-ink/60">{item.detail}</p>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </Reveal>
@@ -1069,7 +1307,12 @@ function FAQ() {
   );
 }
 
-function Footer() {
+function Footer({ onInspect }: { onInspect: (id: string) => void }) {
+  const shuffle = () => {
+    const index = Math.floor(Math.random() * product.modules.length);
+    onInspect(product.modules[index].id);
+  };
+
   return (
     <footer className="bg-bone-100">
       <div className="mx-auto max-w-[1400px] px-5 py-16 sm:px-8">
@@ -1147,6 +1390,28 @@ function Footer() {
                 </code>
               </li>
             </ul>
+
+            <div className="mt-6 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={shuffle}
+                className="group inline-flex items-center justify-between gap-3 border border-ink/20 px-4 py-3 text-left font-mono text-[9px] uppercase tracking-[0.14em] text-ink/70 transition-colors hover:border-ink hover:bg-ink hover:text-bone-50"
+              >
+                Shuffle a bay
+                <Shuffle className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                  window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+                }}
+                className="inline-flex items-center justify-between gap-3 px-4 py-2 text-left font-mono text-[9px] uppercase tracking-[0.14em] text-ink/40 transition-colors hover:text-ink"
+              >
+                Back to the top
+                <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1177,7 +1442,7 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col bg-bone-50">
       <Header />
       <Cart />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <Hero selected={selected} onSelect={select} />
         <Science />
         <StationSection onInspect={inspect} />
@@ -1191,7 +1456,7 @@ export default function HomePage() {
         <FAQ />
         <CTA />
       </main>
-      <Footer />
+      <Footer onInspect={inspect} />
     </div>
   );
 }

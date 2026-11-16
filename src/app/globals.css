@@ -145,6 +145,38 @@ button:disabled {
   }
 }
 
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes cart-in {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes fall {
   to {
     transform: translateY(110vh) rotate(720deg);
@@ -162,6 +194,14 @@ button:disabled {
 
 .animate-rise {
   animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-cart-in {
+  animation: cart-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease both;
 }
 
 .reveal {
@@ -259,31 +299,3 @@ button:disabled {
   }
 }
 
-.lift {
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.lift:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 20px 44px rgba(23, 21, 15, 0.07);
-}
-
-.scent-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(240px circle at var(--scent-x, 50%) var(--scent-y, 50%), rgba(200, 137, 47, 0.18), transparent 70%);
-  transition: opacity 0.5s ease;
-}
-
-.scent-card:hover::before {
-  opacity: 1;
-}
-
-.scent-card > * {
-  position: relative;
-  z-index: 1;
-}

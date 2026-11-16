@@ -222,6 +222,10 @@ function Screws({ color = METAL }: { color?: string }) {
   );
 }
 
+interface ModuleBodyProps {
+  active: boolean;
+}
+
 function Treat({ position, scale = 0.23 }: { position: [number, number, number]; scale?: number }) {
   return (
     <mesh position={position} scale={scale} castShadow>
@@ -231,7 +235,14 @@ function Treat({ position, scale = 0.23 }: { position: [number, number, number];
   );
 }
 
-function ScentMaze() {
+function ScentMaze({ active }: ModuleBodyProps) {
+  const wallsRef = useRef<Group>(null);
+  const reduced = useReducedMotion();
+  useFrame((state, delta) => {
+    if (!wallsRef.current || reduced) return;
+    const sway = active ? Math.sin(state.clock.elapsedTime * 0.9) * 0.11 : 0;
+    wallsRef.current.position.z = MathUtils.damp(wallsRef.current.position.z, sway, 5, delta);
+  });
   const walls: Array<{ p: [number, number, number]; s: [number, number, number] }> = [
     { p: [-1.2, 0.3, -1.45], s: [2.6, 0.42, 0.28] },
     { p: [1.55, 0.3, -0.6], s: [0.28, 0.42, 1.9] },
@@ -248,12 +259,14 @@ function ScentMaze() {
       <RoundedBox args={[5.02, 0.14, 5.02]} radius={0.1} smoothness={3} position={[0, 0.8, 0]}>
         <meshStandardMaterial color={DEEP['scent-maze']} roughness={0.55} />
       </RoundedBox>
-      {walls.map((wall, i) => (
-        <mesh key={i} position={[wall.p[0], 0.98, wall.p[2]]} castShadow>
-          <boxGeometry args={wall.s} />
-          <meshStandardMaterial color={BONE} roughness={0.5} />
-        </mesh>
-      ))}
+      <group ref={wallsRef}>
+        {walls.map((wall, i) => (
+          <mesh key={i} position={[wall.p[0], 0.98, wall.p[2]]} castShadow>
+            <boxGeometry args={wall.s} />
+            <meshStandardMaterial color={BONE} roughness={0.5} />
+          </mesh>
+        ))}
+      </group>
       <Treat position={[-2.05, 1.02, -2.0]} scale={0.19} />
       <Treat position={[0.2, 1.02, -0.9]} scale={0.2} />
       <Treat position={[2.06, 1.02, 1.95]} scale={0.19} />
@@ -266,7 +279,14 @@ function ScentMaze() {
   );
 }
 
-function TreatTumble() {
+function TreatTumble({ active }: ModuleBodyProps) {
+  const drum = useRef<Group>(null);
+  const reduced = useReducedMotion();
+  useFrame((state, delta) => {
+    if (!drum.current || reduced) return;
+    const rock = active ? Math.sin(state.clock.elapsedTime * 0.85) * 0.14 : 0;
+    drum.current.rotation.x = MathUtils.damp(drum.current.rotation.x, rock, 4, delta);
+  });
   const treats: Array<[number, number, number]> = [
     [-0.8, 1.65, 0.4],
     [-0.2, 1.45, -0.2],
@@ -291,50 +311,62 @@ function TreatTumble() {
           <meshStandardMaterial color={MODULE_COLORS['treat-tumble']} roughness={0.42} metalness={0.05} />
         </RoundedBox>
       ))}
-      <mesh position={[0, 1.75, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[1.72, 1.72, 3.15, 48, 1, true]} />
-        <meshPhysicalMaterial
-          color="#F3F6F4"
-          roughness={0.12}
-          metalness={0}
-          transmission={0.92}
-          thickness={0.55}
-          ior={1.48}
-          transparent
-          opacity={0.55}
-          side={DoubleSide}
-        />
-      </mesh>
+      <group ref={drum}>
+        <mesh position={[0, 1.75, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <cylinderGeometry args={[1.72, 1.72, 3.15, 48, 1, true]} />
+          <meshPhysicalMaterial
+            color="#F3F6F4"
+            roughness={0.12}
+            metalness={0}
+            transmission={0.92}
+            thickness={0.55}
+            ior={1.48}
+            transparent
+            opacity={0.55}
+            side={DoubleSide}
+          />
+        </mesh>
+        {[-1.62, 1.62].map((x) => (
+          <group key={x}>
+            <mesh position={[x, 1.75, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[1.78, 1.78, 0.14, 40]} />
+              <meshStandardMaterial color={MODULE_COLORS['treat-tumble']} roughness={0.4} />
+            </mesh>
+            <mesh position={[x * 1.06, 1.75, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[0.42, 0.42, 0.1, 28]} />
+              <meshStandardMaterial color="#1B1710" roughness={0.6} />
+            </mesh>
+          </group>
+        ))}
+        {treats.map((p, i) => (
+          <Treat key={i} position={p} scale={0.21} />
+        ))}
+      </group>
       <mesh position={[0, 1.75, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.13, 0.13, 4.75, 16]} />
         <meshStandardMaterial color={METAL} metalness={1} roughness={0.26} />
       </mesh>
-      {[-1.62, 1.62].map((x) => (
-        <group key={x}>
-          <mesh position={[x, 1.75, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[1.78, 1.78, 0.14, 40]} />
-            <meshStandardMaterial color={MODULE_COLORS['treat-tumble']} roughness={0.4} />
-          </mesh>
-          <mesh position={[x * 1.06, 1.75, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.42, 0.42, 0.1, 28]} />
-            <meshStandardMaterial color="#1B1710" roughness={0.6} />
-          </mesh>
-        </group>
-      ))}
-      {treats.map((p, i) => (
-        <Treat key={i} position={p} scale={0.21} />
-      ))}
       <Screws />
     </group>
   );
 }
 
-function FlipFind() {
+function FlipFind({ active }: ModuleBodyProps) {
   const lids: Array<{ x: number; open: number }> = [
     { x: -1.6, open: -0.62 },
     { x: 0, open: -0.5 },
     { x: 1.6, open: -0.7 },
   ];
+  const lidRefs = useRef<Array<Group | null>>([]);
+  const reduced = useReducedMotion();
+  useFrame((state, delta) => {
+    if (reduced) return;
+    lidRefs.current.forEach((lid, i) => {
+      const base = lids[i]?.open ?? 0;
+      const target = base + (active ? Math.sin(state.clock.elapsedTime * 1.15 + i * 1.7) * 0.11 : 0);
+      if (lid) lid.rotation.x = MathUtils.damp(lid.rotation.x, target, 4, delta);
+    });
+  });
   return (
     <group>
       <RoundedBox args={[5.6, 0.92, 5.6]} radius={0.2} smoothness={4} position={[0, 0.46, 0]} castShadow receiveShadow>
@@ -343,8 +375,15 @@ function FlipFind() {
       <RoundedBox args={[4.9, 0.16, 4.9]} radius={0.1} smoothness={3} position={[0, 0.92, 0]}>
         <meshStandardMaterial color={DEEP['flip-find']} roughness={0.55} />
       </RoundedBox>
-      {lids.map(({ x, open }) => (
-        <group key={x} position={[x, 1.02, -1.15]} rotation={[open, 0, 0]}>
+      {lids.map(({ x, open }, i) => (
+        <group
+          key={x}
+          ref={(node) => {
+            lidRefs.current[i] = node;
+          }}
+          position={[x, 1.02, -1.15]}
+          rotation={[open, 0, 0]}
+        >
           <RoundedBox
             args={[1.42, 0.16, 2.2]}
             radius={0.07}
@@ -372,7 +411,14 @@ function FlipFind() {
   );
 }
 
-function SnuffleSpiral() {
+function SnuffleSpiral({ active }: ModuleBodyProps) {
+  const spiralRef = useRef<Group>(null);
+  const reduced = useReducedMotion();
+  useFrame((state, delta) => {
+    if (!spiralRef.current || reduced) return;
+    const turn = active ? Math.sin(state.clock.elapsedTime * 0.4) * 0.3 : 0;
+    spiralRef.current.rotation.y = MathUtils.damp(spiralRef.current.rotation.y, turn, 3, delta);
+  });
   const curve = useMemo(() => {
     const points: Vector3[] = [];
     const turns = 2.4;
@@ -404,28 +450,42 @@ function SnuffleSpiral() {
         <cylinderGeometry args={[2.62, 2.62, 0.1, 56]} />
         <meshStandardMaterial color={MODULE_COLORS['snuffle-spiral']} roughness={0.6} />
       </mesh>
-      <mesh castShadow receiveShadow>
-        <tubeGeometry args={[curve, 200, 0.34, 12, false]} />
-        <meshPhysicalMaterial
-          color={MODULE_COLORS['snuffle-spiral']}
-          roughness={0.94}
-          sheen={1}
-          sheenRoughness={0.7}
-          sheenColor="#E9CFDF"
-        />
+      <mesh position={[0, 0.52, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[2.58, 0.045, 10, 72]} />
+        <meshStandardMaterial color={METAL} metalness={1} roughness={0.32} />
       </mesh>
-      <mesh position={[0, 0.62, 0]}>
-        <cylinderGeometry args={[0.55, 0.62, 0.32, 28]} />
-        <meshStandardMaterial color={DEEP['snuffle-spiral']} roughness={0.6} />
-      </mesh>
-      {treats.map((p, i) => (
-        <Treat key={i} position={[p[0], p[1] + 0.1, p[2]]} scale={0.16} />
-      ))}
+      <group ref={spiralRef}>
+        <mesh castShadow receiveShadow>
+          <tubeGeometry args={[curve, 200, 0.34, 12, false]} />
+          <meshPhysicalMaterial
+            color={MODULE_COLORS['snuffle-spiral']}
+            roughness={0.94}
+            sheen={1}
+            sheenRoughness={0.7}
+            sheenColor="#E9CFDF"
+          />
+        </mesh>
+        <mesh position={[0, 0.62, 0]}>
+          <cylinderGeometry args={[0.55, 0.62, 0.32, 28]} />
+          <meshStandardMaterial color={METAL} metalness={0.85} roughness={0.35} />
+        </mesh>
+        {treats.map((p, i) => (
+          <Treat key={i} position={[p[0], p[1] + 0.1, p[2]]} scale={0.16} />
+        ))}
+      </group>
+      <Screws />
     </group>
   );
 }
 
-function ScentTubes() {
+function ScentTubes({ active }: ModuleBodyProps) {
+  const rack = useRef<Group>(null);
+  const reduced = useReducedMotion();
+  useFrame((state, delta) => {
+    if (!rack.current || reduced) return;
+    const bob = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.035 : 0;
+    rack.current.position.y = MathUtils.damp(rack.current.position.y, bob, 5, delta);
+  });
   const tubes: Array<{ x: number; z: number; h: number }> = [
     { x: -1.55, z: -1.35, h: 2.5 },
     { x: 0, z: -1.55, h: 1.7 },
@@ -442,8 +502,9 @@ function ScentTubes() {
       <RoundedBox args={[4.95, 0.12, 4.95]} radius={0.1} smoothness={3} position={[0, 0.76, 0]}>
         <meshStandardMaterial color={DEEP['scent-tubes']} roughness={0.55} />
       </RoundedBox>
-      {tubes.map((tube, i) => (
-        <group key={i} position={[tube.x, 0.76, tube.z]}>
+      <group ref={rack}>
+        {tubes.map((tube, i) => (
+          <group key={i} position={[tube.x, 0.76, tube.z]}>
           <mesh position={[0, tube.h / 2, 0]} castShadow>
             <cylinderGeometry args={[0.44, 0.44, tube.h, 26, 1, true]} />
             <meshStandardMaterial color={LIGHT['scent-tubes']} roughness={0.55} side={DoubleSide} />
@@ -456,15 +517,23 @@ function ScentTubes() {
             <torusGeometry args={[0.46, 0.055, 10, 28]} />
             <meshStandardMaterial color={METAL} metalness={1} roughness={0.3} />
           </mesh>
-          {i % 2 === 0 && <Treat position={[0, tube.h * 0.6, 0]} scale={0.16} />}
-        </group>
-      ))}
+            {i % 2 === 0 && <Treat position={[0, tube.h * 0.6, 0]} scale={0.16} />}
+          </group>
+        ))}
+      </group>
       <Screws />
     </group>
   );
 }
 
-function PawPress() {
+function PawPress({ active }: ModuleBodyProps) {
+  const padsRef = useRef<Group>(null);
+  const reduced = useReducedMotion();
+  useFrame((state, delta) => {
+    if (!padsRef.current || reduced) return;
+    const pulse = active ? 1 + Math.sin(state.clock.elapsedTime * 1.7) * 0.014 : 1;
+    padsRef.current.scale.setScalar(MathUtils.damp(padsRef.current.scale.x, pulse, 5, delta));
+  });
   const pads: Array<[number, number]> = [
     [-1.2, -1.2],
     [1.2, -1.2],
@@ -479,8 +548,9 @@ function PawPress() {
       <RoundedBox args={[4.95, 0.1, 4.95]} radius={0.1} smoothness={3} position={[0, 0.8, 0]}>
         <meshStandardMaterial color={DEEP['paw-press']} roughness={0.55} />
       </RoundedBox>
-      {pads.map(([x, z], i) => (
-        <group key={i} position={[x, 0.86, z]}>
+      <group ref={padsRef}>
+        {pads.map(([x, z], i) => (
+          <group key={i} position={[x, 0.86, z]}>
           <mesh rotation={[0, 0, 0]} castShadow>
             <sphereGeometry args={[0.72, 28, 18, 0, Math.PI * 2, 0, Math.PI / 2]} />
             <meshPhysicalMaterial
@@ -503,14 +573,15 @@ function PawPress() {
               toneMapped={false}
             />
           </mesh>
-        </group>
-      ))}
+          </group>
+        ))}
+      </group>
       <Screws />
     </group>
   );
 }
 
-const MODULE_BODIES: Record<string, () => React.ReactElement> = {
+const MODULE_BODIES: Record<string, (props: ModuleBodyProps) => React.ReactElement> = {
   'scent-maze': ScentMaze,
   'treat-tumble': TreatTumble,
   'flip-find': FlipFind,
@@ -566,11 +637,12 @@ interface ModuleUnitProps {
   index: number;
   active: boolean;
   hovered: boolean;
+  hasSelection: boolean;
   onHover: (id: string | null) => void;
   onSelect: (id: string) => void;
 }
 
-function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUnitProps) {
+function ModuleUnit({ id, index, active, hovered, hasSelection, onHover, onSelect }: ModuleUnitProps) {
   const group = useRef<Group>(null);
   const reduced = useReducedMotion();
   const [x, z] = SLOTS[id];
@@ -611,9 +683,9 @@ function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUni
 
   return (
     <group ref={group} position={[x, DECK_Y - 1.2, z]}>
-      <Body />
+      <Body active={active} />
       {active ? <ModuleHalo color={color} /> : null}
-      {(hovered || active) && meta ? (
+      {hovered && !hasSelection && meta ? (
         <Html
           position={[0, 3.9, 0]}
           center
@@ -627,7 +699,7 @@ function ModuleUnit({ id, index, active, hovered, onHover, onSelect }: ModuleUni
             </p>
             <p className="mt-0.5 font-display text-base leading-tight text-ink">{meta.name}</p>
             <p className="mt-1 font-mono text-[7px] uppercase tracking-[0.14em] text-ink/40">
-              {active ? 'Reading note open' : 'Click to inspect'}
+              Click to inspect
             </p>
           </div>
         </Html>
@@ -810,6 +882,7 @@ function Station({
           index={index}
           active={selected === id}
           hovered={hovered === id}
+          hasSelection={selected !== null}
           onHover={setHovered}
           onSelect={onSelect}
         />
@@ -938,7 +1011,7 @@ function Scene({
         dampingFactor={0.06}
         rotateSpeed={0.55}
         zoomSpeed={0.6}
-        minDistance={19}
+        minDistance={15}
         maxDistance={44}
         minPolarAngle={Math.PI / 3.6}
         maxPolarAngle={Math.PI / 2.05}
@@ -1003,7 +1076,7 @@ export function Product3D({ selected = null, onSelect, className }: Product3DPro
           </Canvas>
         </Suspense>
       )}
-      <div className="pointer-events-none absolute bottom-16 left-4 hidden items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40 sm:flex">
+      <div className="pointer-events-none absolute bottom-20 left-4 hidden items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/40 sm:flex">
         <span className="inline-block h-1 w-1 rounded-full bg-ochre" />
         {selected ? 'Drag to orbit · Click the deck to reset' : 'Drag to orbit · Select a module'}
       </div>

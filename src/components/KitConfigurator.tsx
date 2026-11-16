@@ -49,6 +49,36 @@ const FINISHES: Array<{ key: FinishKey; label: string; swatch: string; note: str
   { key: 'bone', label: 'Bone', swatch: '#D8CDB7', note: 'Powder-coated warm bone' },
 ];
 
+const PRESETS: Array<{
+  label: string;
+  note: string;
+  kit: KitKey;
+  scents: ScentKey;
+  finish: FinishKey;
+}> = [
+  {
+    label: 'The settler',
+    note: 'Three modules, one note at a time. A calm first month.',
+    kit: 'starter',
+    scents: '4',
+    finish: 'graphite',
+  },
+  {
+    label: 'The worker',
+    note: 'All six instincts and both intensities. Built to rotate.',
+    kit: 'core',
+    scents: '8',
+    finish: 'graphite',
+  },
+  {
+    label: 'The senior',
+    note: 'Lower reach, softer finish, shorter sessions.',
+    kit: 'starter',
+    scents: '4',
+    finish: 'bone',
+  },
+];
+
 export function KitConfigurator() {
   const [kit, setKit] = useState<KitKey>('core');
   const [scents, setScents] = useState<ScentKey>('4');
@@ -77,6 +107,36 @@ export function KitConfigurator() {
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-ink/15 bg-ink/15 lg:grid-cols-12">
       <div className="bg-bone-50 p-6 sm:p-8 lg:col-span-7">
         <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/45">Start from a household</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            {PRESETS.map((preset) => {
+              const active =
+                kit === preset.kit && scents === preset.scents && finish === preset.finish;
+              return (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => {
+                    setKit(preset.kit);
+                    setScents(preset.scents);
+                    setFinish(preset.finish);
+                  }}
+                  aria-pressed={active}
+                  className={`border p-3 text-left transition-colors ${
+                    active
+                      ? 'border-ink bg-bone-100'
+                      : 'border-ink/20 hover:border-ink/50'
+                  }`}
+                >
+                  <span className="block font-display text-[15px] leading-tight">{preset.label}</span>
+                  <span className="mt-1 block text-[11px] leading-snug text-ink/50">{preset.note}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-8">
           <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/45">Deck size</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {KITS.map((item) => {
@@ -200,7 +260,7 @@ export function KitConfigurator() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <span
                   key={i}
-                  className={`h-3 flex-1 ${i < installed ? 'bg-ink' : 'bg-ink/12'}`}
+                  className={`h-3 flex-1 transition-colors duration-500 ${i < installed ? 'bg-ink' : 'bg-ink/12'}`}
                 />
               ))}
             </div>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useMounted } from '@/lib/use-mounted';
 import { useScrolled } from '@/lib/use-scrolled';
+import { useActiveSection } from '@/lib/use-active-section';
 import { Menu, ShoppingBag, X } from 'lucide-react';
 
 const NAV = [
@@ -23,6 +24,7 @@ export function Header() {
   );
   const mounted = useMounted();
   const scrolled = useScrolled();
+  const activeSection = useActiveSection(['station', 'modules', 'scents', 'build', 'notes']);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -37,6 +39,13 @@ export function Header() {
   const visibleCount = mounted ? cartCount : 0;
 
   return (
+    <>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-sm focus:bg-ink focus:px-4 focus:py-2 focus:font-mono focus:text-[10px] focus:uppercase focus:tracking-[0.16em] focus:text-bone-50"
+      >
+        Skip to content
+      </a>
     <header
       className={`sticky top-0 z-50 border-b border-ink/15 backdrop-blur-md transition-[background-color,box-shadow] duration-500 ${
         scrolled
@@ -65,18 +74,28 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="group flex items-baseline gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/65 transition-colors hover:text-ink"
-            >
-              <span className="text-[8px] text-ochre">{item.index}</span>
-              <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-ink/40">
-                {item.label}
-              </span>
-            </Link>
-          ))}
+          {NAV.map((item) => {
+            const active = activeSection === item.href.split('#')[1];
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'true' : undefined}
+                className={`group flex items-baseline gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                  active ? 'text-ink' : 'text-ink/65 hover:text-ink'
+                }`}
+              >
+                <span className="text-[8px] text-ochre">{item.index}</span>
+                <span
+                  className={`border-b pb-0.5 transition-colors ${
+                    active ? 'border-ochre' : 'border-transparent group-hover:border-ink/40'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -95,7 +114,10 @@ export function Header() {
           >
             <ShoppingBag className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Cart</span>
-            <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-ochre px-1 text-[9px] font-semibold leading-none text-ink">
+            <span
+              key={visibleCount}
+              className="flex h-[18px] min-w-[18px] animate-[badge-pop_0.4s_cubic-bezier(0.22,1,0.36,1)] items-center justify-center rounded-full bg-ochre px-1 text-[9px] font-semibold leading-none text-ink"
+            >
               {visibleCount}
             </span>
           </button>
@@ -115,7 +137,7 @@ export function Header() {
       {menuOpen && (
         <nav
           id="mobile-nav"
-          className="border-t border-ink/15 bg-bone-50 px-5 pb-8 pt-4 lg:hidden"
+          className="animate-rise border-t border-ink/15 bg-bone-50 px-5 pb-8 pt-4 lg:hidden"
           aria-label="Mobile"
         >
           <ul className="divide-y divide-ink/10">
@@ -145,5 +167,6 @@ export function Header() {
         </nav>
       )}
     </header>
+    </>
   );
 }

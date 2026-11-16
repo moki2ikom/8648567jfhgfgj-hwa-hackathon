@@ -150,7 +150,7 @@ function ConfirmationContent() {
       <Header />
       <Cart />
 
-      <main className="flex-1 px-5 py-12 sm:px-8 sm:py-16">
+      <main id="main" className="flex-1 px-5 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-3xl">
           {status === 'loading' && (
             <div className="flex flex-col items-center py-24 text-center">
@@ -205,7 +205,7 @@ function ConfirmationContent() {
           )}
 
           {status === 'ready' && order && (
-            <>
+            <div className="animate-rise">
               <div className="border-b border-ink/15 pb-8">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-moss text-bone-50">
@@ -365,7 +365,7 @@ function ConfirmationContent() {
                   <ArrowLeft className="h-3.5 w-3.5" /> Back to the station
                 </Link>
               </div>
-            </>
+            </div>
           )}
         </div>
       </main>
@@ -378,7 +378,7 @@ function ConfirmationSkeleton() {
     <div className="flex min-h-screen flex-col bg-bone-50">
       <Header />
       <Cart />
-      <main className="flex flex-1 px-5 py-16">
+      <main id="main" className="flex flex-1 px-5 py-16">
         <div className="mx-auto w-full max-w-3xl animate-pulse">
           <div className="h-3 w-32 bg-ink/10" />
           <div className="mt-6 h-10 w-2/3 bg-ink/10" />

@@ -195,6 +195,7 @@ export const product = {
       snuffle: 'Single layout',
       ball: 'Single mechanism',
       puzzle: 'Fixed board',
+      note: 'Every bay accepts every module, so the problem space changes without new hardware.',
     },
     {
       feature: 'Scent work',
@@ -202,6 +203,7 @@ export const product = {
       snuffle: 'Treats only',
       ball: 'Treats only',
       puzzle: 'Treats only',
+      note: 'Four cartridges change the information layer; the maze stays, the question does not.',
     },
     {
       feature: 'Difficulty scaling',
@@ -209,6 +211,7 @@ export const product = {
       snuffle: 'Packing density',
       ball: 'Baffle only',
       puzzle: 'One level',
+      note: 'Five discrete levels per module. Raise one module at a time and leave the rest familiar.',
     },
     {
       feature: 'Solo-safe',
@@ -216,6 +219,7 @@ export const product = {
       snuffle: 'Yes',
       ball: 'Yes',
       puzzle: 'Supervised',
+      note: 'Passive bays have no loose parts. Paw Press and Flip & Find are for supervised sessions.',
     },
     {
       feature: 'Dishwasher-safe parts',
@@ -223,6 +227,7 @@ export const product = {
       snuffle: 'No',
       ball: 'Some',
       puzzle: 'No',
+      note: 'Copolyester shells and fleece coils lift out. Hardware stays on the bench.',
     },
     {
       feature: 'Warranty',
@@ -230,6 +235,7 @@ export const product = {
       snuffle: '30 days',
       ball: '1 year',
       puzzle: 'None',
+      note: 'Two years on the base, magnets and hinges. Wear parts are stocked at cost.',
     },
   ],
 
@@ -281,6 +287,7 @@ export const product = {
       rating: 5,
       date: 'October 2026',
       household: 'Illustrative note',
+      tags: ['Active', 'First-timer'],
       title: 'The rotation is the whole thing',
       text: 'We started with the maze and the spiral. By week three she was opening the Flip & Find latches without a treat behind them — she just wanted to check. The difference from our old snuffle mat is that I can make it harder without buying a new object. Week six and she still checks the deck when I walk past it.',
     },
@@ -292,6 +299,7 @@ export const product = {
       rating: 5,
       date: 'September 2026',
       household: 'Illustrative note',
+      tags: ['Active', 'Strong chewer'],
       title: 'Survived a labrador',
       text: 'I bought it expecting to be disappointed by the plastic. Two months in, the tumble drum has a few scuffs and everything else looks new. The brass axle and the weight of the base are what sold me — it does not slide across the floor when he gets enthusiastic.',
     },
@@ -303,6 +311,7 @@ export const product = {
       rating: 4,
       date: 'September 2026',
       household: 'Illustrative note',
+      tags: ['Senior', 'Sensitive'],
       title: 'Good for an older dog',
       text: 'Our dog is eight and mostly deaf, so scent is how she still gets information about the world. The tubes are her favourite. I took one star off because the Paw Press is too much for her joints, but the modular design means we simply leave that bay empty.',
     },
@@ -314,6 +323,7 @@ export const product = {
       rating: 5,
       date: 'August 2026',
       household: 'Illustrative note',
+      tags: ['First-timer'],
       title: 'Finally, something he cannot finish',
       text: 'He solved every puzzle we owned in a week. The scent cartridges were the missing piece — the same maze becomes a new problem when the trail changes. The field guide is genuinely useful; we are on configuration nine.',
     },
@@ -323,14 +333,17 @@ export const product = {
     {
       title: '60-day nose-back trial',
       text: 'Sixty days to live with it. If your dog is not interested, we refund the order and pay the return shipping.',
+      detail: 'Return shipping is prepaid. We ask for the station back in any condition so the hardware can be inspected and reused.',
     },
     {
       title: '2-year hardware warranty',
       text: 'Base, magnets, hinges and collars are covered. If a module fails, we replace it, not the whole station.',
+      detail: 'Wear parts — fleece coils, scent wicks and treat residue — are excluded, but replacement coils stay at cost.',
     },
     {
       title: 'Coils at cost',
       text: 'Fleece wears out before hardware does. Replacement coils are $12 and ship with any order — no subscription, no scheduled refills.',
+      detail: 'Coils are $12 each, always. No subscription, no minimum order, no scheduled refill reminder.',
     },
   ],
 
